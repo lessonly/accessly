@@ -4,11 +4,15 @@ require "accesscontrol/models/permitted_action"
 module AccessControl
   module_function
 
+  def self.table_name_prefix
+    "access_control_"
+  end
+
   def can?(actor, action_id, object_name, object_id = nil)
     PermittedAction.where(
       actor: actor,
       action: action_id,
-      object_name: object_name
+      object_name: String(object_name)
     ).exists?
   end
 
