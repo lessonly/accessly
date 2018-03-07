@@ -3,8 +3,10 @@ require "accesscontrol"
 require "bundler/setup"
 
 require "minitest/autorun"
+require "minitest/pride"
 require "active_record"
 require "fixtures/user"
+require "fixtures/post"
 require "database_cleaner"
 
 def prepare_for_tests

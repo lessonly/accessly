@@ -1,10 +1,15 @@
-require "test_helper"
+require 'test_helper'
 
-class AccesscontrolTest < Minitest::Test
-  def test_can_with_permission
+describe AccessControl do
+  it 'returns false when actor lacks access' do
     actor = User.create!
 
-    AccessControl.can?(actor, 1, Post, 5)
+    AccessControl.can?(actor, 1, Post, 5).must_equal false
+  end
+
+  it 'retuns true when the actor has access' do
+    actor = User.create!
+
+    AccessControl.can?(actor, 1, Post, 5).must_equal true
   end
 end
-

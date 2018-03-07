@@ -1,9 +1,15 @@
 require "accesscontrol/version"
+require "accesscontrol/models/permitted_action"
 
 module AccessControl
   module_function
 
   def can?(actor, action_id, object_name, object_id = nil)
+    PermittedAction.where(
+      actor: actor,
+      action: action_id,
+      object_name: object_name
+    ).exists?
   end
 
   def list(actor, action_id, object_name)
