@@ -8,6 +8,7 @@ require "active_record"
 require "fixtures/user"
 require "fixtures/post"
 require "accesscontrol/models/permitted_action"
+require "accesscontrol/models/permitted_action_on_object"
 require "database_cleaner"
 
 def prepare_for_tests
