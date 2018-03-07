@@ -1,11 +1,10 @@
 require "test_helper"
 
 class AccesscontrolTest < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::Accesscontrol::VERSION
-  end
+  def test_can_with_permission
+    actor = User.create!
 
-  def test_it_does_something_useful
-    assert false
+    AccessControl.can?(actor, 1, Post, 5)
   end
 end
+

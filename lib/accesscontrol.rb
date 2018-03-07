@@ -1,6 +1,7 @@
 require "accesscontrol/version"
 
 module AccessControl
+  module_function
 
   def can?(actor, action_id, object_name, object_id = nil)
   end

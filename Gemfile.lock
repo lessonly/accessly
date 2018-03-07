@@ -1,19 +1,38 @@
 PATH
   remote: .
   specs:
-    accesscontrol (0.0.1)
+    access_control_rails (0.0.1)
+      activerecord (>= 5.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (5.1.5)
+      activesupport (= 5.1.5)
+    activerecord (5.1.5)
+      activemodel (= 5.1.5)
+      activesupport (= 5.1.5)
+      arel (~> 8.0)
+    activesupport (5.1.5)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (~> 0.7)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+    arel (8.0.0)
+    concurrent-ruby (1.0.5)
+    i18n (0.9.5)
+      concurrent-ruby (~> 1.0)
     minitest (5.11.3)
     rake (10.5.0)
+    thread_safe (0.3.6)
+    tzinfo (1.2.5)
+      thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  accesscontrol!
+  access_control_rails!
   bundler (~> 1.16)
   minitest (~> 5.0)
   rake (~> 10.0)
