@@ -1,0 +1,25 @@
+PATH
+  remote: .
+  specs:
+    accesscontrol (0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.11.3)
+    rake (10.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  accesscontrol!
+  bundler (~> 1.16)
+  minitest (~> 5.0)
+  rake (~> 10.0)
+
+RUBY VERSION
+   ruby 2.4.2p198
+
+BUNDLED WITH
+   1.16.1
