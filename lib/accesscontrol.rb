@@ -18,6 +18,7 @@ module AccessControl
   end
 
   def list(actor, action_id, object_type)
+    Records.list(actor, action_id, object_type)
   end
 
   def grant(actor, action_id, object_type, object_id = nil)
