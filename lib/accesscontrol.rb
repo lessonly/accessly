@@ -1,5 +1,6 @@
 require "accesscontrol/version"
-require "accesscontrol/models/permitted_action"
+require "accesscontrol/records"
+require "accesscontrol/general"
 
 module AccessControl
   module_function
@@ -10,18 +11,9 @@ module AccessControl
 
   def can?(actor, action_id, object_type, object_id = nil)
     if object_id.nil?
-      PermittedAction.where(
-        actor: actor,
-        action: action_id,
-        object_type: String(object_type),
-      ).exists?
+      General.can?(actor, action_id, object_type)
     else
-      PermittedActionOnObject.where(
-        actor: actor,
-        action: action_id,
-        object_type: String(object_type),
-        object_id: object_id
-      ).exists?
+      Records.can?(actor, action_id, object_type, object_id)
     end
   end
 
