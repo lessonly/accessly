@@ -40,8 +40,11 @@ module AccessControl
 
     def find_or_set_value(*keys, &query)
       found_value = past_lookups.dig(*keys)
-      found_value = found_value.nil? ? query.call : found_value
-      set_value(*keys, value: found_value)
+
+      if found_value.nil?
+        found_value = query.call
+        set_value(*keys, value: found_value)
+      end
 
       found_value
     end
