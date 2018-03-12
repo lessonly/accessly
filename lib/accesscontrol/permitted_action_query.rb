@@ -12,6 +12,8 @@ module AccessControl
     # permissions, such as to group parts of a particular feature
     # in your application.
     #
+    # Lookups are cached in the object to prevent redundant database calls.
+    #
     # @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
     # @param namespace [String] The namespace of the given action_id.
     # @return [Boolean] Returns true if actor has been granted the permission, false otherwise.
