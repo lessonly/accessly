@@ -49,7 +49,39 @@ module AccessControl
     def list(action_id, object_type)
     end
 
+
+    # Grant a permission to an actor.
+    # @return [nil]
+    # @overload grant(actor, action_id, object_type)
+    #   Allow permission on a general action in the given namespace represented by object_type.
+    #   A grant is universally unique and is enforced at the database level.
+    #
+    #   @param action_id [Integer] The action to grant for the object
+    #   @param object_type [String] The namespace of the given action_id.
+    #   @return [nil] Returns nil if successful, otherwise will raise an Error (AccessControl::CouldNotGrantError).
+    #
+    #   @example
+    #     # Allow the user access to posts
+    #     AccessControl::Query.new(user).grant(3, "posts")
+
+    # @overload grant(actor, action_id, object_type, object_id)
+    # Allow permission on an ActiveRecord object.
+    # A grant is universally unique and is enforced at the database level.
+    #
+    #   @param action_id [Integer] The action to grant for the object
+    #   @param object_type [ActiveRecord::Base] The ActiveRecord model that receives a permission grant.
+    #   @param object_id [Integer] The id of the ActiveRecord object which receives a permission grant
+    #   @return [nil] Returns nil if successful, otherwise will raise an Error (AccessControl::CouldNotGrantError).
+    #
+    #   @example
+    #     # Allow the user access to Post 7
+    #     AccessControl::Query.new(user).grant(3, Post, 7)
     def grant(action_id, object_type, object_id = nil)
+      if object_id.nil?
+        permitted_action_query.grant(action_id, object_type)
+      else
+        permitted_action_on_object_query.grant(action_id, object_type, object_id)
+      end
     end
 
     def revoke(action_id, object_type, object_id = nil)

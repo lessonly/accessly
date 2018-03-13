@@ -29,6 +29,31 @@ module AccessControl
       end
     end
 
+    # Allow permission on an ActiveRecord object.
+    # A grant is universally unique and is enforced at the database level.
+    #
+    # @param action_id [Integer] The action to grant for the object
+    # @param object_type [ActiveRecord::Base] The ActiveRecord model that receives a permission grant.
+    # @param object_id [Integer] The id of the ActiveRecord object which receives a permission grant
+    # @return [nil] Returns nil if successful, otherwise will raise an Error (AccessControl::CouldNotGrantError).
+    #
+    # @example
+    #   # Allow the user access to Post 7
+    #   AccessControl::Query.new(user).grant(3, Post, 7)
+    def grant(action_id, object_type, object_id)
+      a = PermittedActionOnObject.create(
+        id: SecureRandom.uuid,
+        actor: @actor,
+        action: action_id,
+        object_type: String(object_type),
+        object_id: object_id
+      )
+      puts a.actor_type
+      nil
+    rescue
+      raise AccessControl::CouldNotGrantError.new("Could not grant action #{action_id} on object #{object_type} with id #{object_id} for actor #{@actor}")
+    end
+
     def list(action_id, object_type)
     end
 
