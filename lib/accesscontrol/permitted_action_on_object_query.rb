@@ -1,10 +1,13 @@
+require "accesscontrol/where_tuple"
+
 module AccessControl
 
   # Permission checks directly related to specific ActiveRecord records happen here.
   class PermittedActionOnObjectQuery
 
-    def initialize(actor)
+    def initialize(actor, actor_tuples)
       @actor = actor
+      @actor_tuples = actor_tuples
     end
 
     # Ask whether the actor has permission to perform action_id
@@ -22,12 +25,12 @@ module AccessControl
     #   AccessControl::Records.can?(user, 5, Post, 7)
     def can?(action_id, object_type, object_id)
       find_or_set_value(:can, @actor.class.name, @actor.id, action_id, object_type) do
-        PermittedActionOnObject.where(
-          actor: @actor,
-          action: action_id,
-          object_type: String(object_type),
-          object_id: object_id
-        ).exists?
+        AccessControl::WhereTuple.where_in(PermittedActionOnObject, [:actor_id, :actor_type], @actor_tuples)
+          .where(
+            action: action_id,
+            object_type: String(object_type),
+            object_id: object_id
+          ).exists?
       end
     end
 

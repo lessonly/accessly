@@ -11,12 +11,18 @@ module AccessControl
   class Query
 
     # Create an instance of AccessControl::Query.
-    # Lookups are cached in the object to prevent redundant calls
-    # to the database.
+    # Lookups are cached in the object to prevent redundant calls to the database.
+    # Pass in an array or ActiveRecord::Relation for actor_groups if the actor
+    # inherits some permissions from other actors in the system. This may happen
+    # when you have a user in one or more groups or organizations with their own
+    # access control permissions.
     #
     # @param actor [ActiveRecord::Base] The actor we're checking for permission on
-    def initialize(actor)
+    # @param actor_groups [Array<Array<Integer, String>>] An array of [id, type] where id is the ID of an actor that actor inherits permissions from and type is the ActiveRecord model class name
+    def initialize(actor, actor_groups = [])
       @actor = actor
+      @actor_groups = actor_groups
+      @actor_tuples = construct_actor_tuples(actor, actor_groups)
     end
 
     # Check whether an actor has a given permission.
@@ -69,11 +75,28 @@ module AccessControl
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= PermittedActionQuery.new(@actor)
+      @_permitted_action_query ||= PermittedActionQuery.new(@actor, @actor_tuples)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor)
+      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor, @actor_tuples)
+    end
+
+    def construct_actor_tuples(actor, actor_groups)
+      actor_tuple = [[actor.id, actor.class.name]]
+
+      actor_group_tuples = case actor_groups
+      when ActiveRecord::Relation
+        actor_groups.pluck(:id).map { |id| [id, actor_groups.model.name] }
+      when Array
+        actor_groups
+      when ActiveRecord::Base
+        [actor_groups.id, actor_groups.class.name]
+      else
+        []
+      end
+
+      actor_tuple + actor_group_tuples
     end
   end
 end
