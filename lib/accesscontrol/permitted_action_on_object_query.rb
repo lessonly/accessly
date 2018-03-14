@@ -50,7 +50,6 @@ module AccessControl
         object_type: String(object_type),
         object_id: object_id
       )
-      puts a.actor_type
       nil
     rescue
       raise AccessControl::CouldNotGrantError.new("Could not grant action #{action_id} on object #{object_type} with id #{object_id} for actor #{@actor}")
