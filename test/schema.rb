@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 1) do
     t.column :segment_id, :integer, default: -1
     t.column :action, :integer
     t.column :actor_id, :integer
-    t.column :actor_type, :string, null: false
+    t.column :actor_type, :string
     t.column :object_type, :string
     t.column :object_id, :integer
   end
