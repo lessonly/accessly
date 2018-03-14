@@ -12,6 +12,8 @@ module AccessControl
     # permissions, such as to group parts of a particular feature
     # in your application.
     #
+    # Lookups are cached in the object to prevent redundant database calls.
+    #
     # @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
     # @param namespace [String] The namespace of the given action_id.
     # @return [Boolean] Returns true if actor has been granted the permission, false otherwise.
@@ -59,8 +61,11 @@ module AccessControl
 
     def find_or_set_value(*keys, &query)
       found_value = past_lookups.dig(*keys)
-      found_value = found_value.nil? ? query.call : found_value
-      set_value(*keys, value: found_value)
+
+      if found_value.nil?
+        found_value =  query.call
+        set_value(*keys, value: found_value)
+      end
 
       found_value
     end

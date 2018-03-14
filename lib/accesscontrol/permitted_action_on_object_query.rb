@@ -10,6 +10,8 @@ module AccessControl
     # Ask whether the actor has permission to perform action_id
     # on a given record.
     #
+    # Lookups are cached in the object to prevent redundant database calls.
+    #
     # @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
     # @param object_type [ActiveRecord::Base] The ActiveRecord model which we're checking for permission on.
     # @param object_id [Integer] The id of the ActiveRecord object which we're checking for permission on.
@@ -65,8 +67,11 @@ module AccessControl
 
     def find_or_set_value(*keys, &query)
       found_value = past_lookups.dig(*keys)
-      found_value = found_value.nil? ? query.call : found_value
-      set_value(*keys, value: found_value)
+
+      if found_value.nil?
+        found_value = query.call
+        set_value(*keys, value: found_value)
+      end
 
       found_value
     end

@@ -2,8 +2,19 @@ require "accesscontrol/permitted_action_on_object_query"
 require "accesscontrol/permitted_action_query"
 
 module AccessControl
+  # AccessControl::Query is the interface that hides the implementation
+  # of the data layer. Tell AccessControl::Query when to grant and revoke
+  # permissions, ask it whether an actor has permission on a
+  # record, ask it for a list of permitted records for the record
+  # type, and ask it whether an actor has a general permission not
+  # related to any certain record or record type.
   class Query
 
+    # Create an instance of AccessControl::Query.
+    # Lookups are cached in the object to prevent redundant calls
+    # to the database.
+    #
+    # @param actor [ActiveRecord::Base] The actor we're checking for permission on
     def initialize(actor)
       @actor = actor
     end
