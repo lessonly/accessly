@@ -48,3 +48,7 @@ bower.json
 
 # Ignore gem stuff
 pkg/
+
+# Ignore generated yard docs
+.yardoc/
+doc/
