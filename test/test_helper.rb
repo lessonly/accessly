@@ -32,8 +32,8 @@ end
 
 def sqlite_config
   {
-    adapter: "sqlite3",
-    database: "aaa_test.sqlite3",
+    adapter: "postgresql",
+    database: "aaa_test",
     pool: 5,
     timeout: 5000
   }

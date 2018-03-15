@@ -19,10 +19,9 @@ module AccessControl
     #
     # @param actor [ActiveRecord::Base] The actor we're checking for permission on
     # @param actor_groups [Array<Array<Integer, String>>] An array of [id, type] where id is the ID of an actor that actor inherits permissions from and type is the ActiveRecord model class name
-    def initialize(actor, actor_groups = [])
+    def initialize(actor)
       @actor = actor
-      @actor_groups = actor_groups
-      @actor_tuples = construct_actor_tuples(actor, actor_groups)
+      @actor_tuples = construct_actor_tuples(actor)
     end
 
     # Check whether an actor has a given permission.
@@ -75,28 +74,38 @@ module AccessControl
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= PermittedActionQuery.new(@actor, @actor_tuples)
+      @_permitted_action_query ||= PermittedActionQuery.new(@actor_tuples)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor, @actor_tuples)
+      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor_tuples)
     end
 
-    def construct_actor_tuples(actor, actor_groups)
-      actor_tuple = [[actor.id, actor.class.name]]
-
-      actor_group_tuples = case actor_groups
-      when ActiveRecord::Relation
-        actor_groups.pluck(:id).map { |id| [id, actor_groups.model.name] }
+    def construct_actor_tuples(actor)
+      actor_tuple = []
+      case actor
       when Array
-        actor_groups
-      when ActiveRecord::Base
-        [actor_groups.id, actor_groups.class.name]
+        actor.each do |a|
+          actor_tuple += actor_tuples_from_source(a)
+        end
       else
-        []
+        actor_tuple += actor_tuples_from_source(actor)
       end
+      actor_tuple
+    end
 
-      actor_tuple + actor_group_tuples
+    def actor_tuples_from_source(actor)
+      actor_tuples = case actor
+      when ActiveRecord::Relation
+        actor.pluck(:id).map { |id| [id, actor.model.name] }
+      when Array
+        [actor]
+      when ActiveRecord::Base
+        [[actor.id, actor.class.name]]
+      else
+        [[]]
+      end
+      actor_tuples
     end
   end
 end

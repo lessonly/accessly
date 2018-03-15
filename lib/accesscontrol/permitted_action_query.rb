@@ -3,8 +3,7 @@ require "accesscontrol/where_tuple"
 module AccessControl
   class PermittedActionQuery
 
-    def initialize(actor, actor_tuples)
-      @actor = actor
+    def initialize(actor_tuples)
       @actor_tuples = actor_tuples
     end
 
@@ -25,7 +24,7 @@ module AccessControl
     #   # Can the user perform the action with id 3 for posts?
     #   AccessControl::General.can?(user, 3, "posts")
     def can?(action_id, object_type)
-      find_or_set_value(@actor.class.name, @actor.id, action_id, object_type) do
+      find_or_set_value(action_id, object_type) do
         AccessControl::WhereTuple.where_in(PermittedAction, [:actor_id, :actor_type], @actor_tuples)
           .where(
             action: action_id,
