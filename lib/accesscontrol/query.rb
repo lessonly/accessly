@@ -69,7 +69,8 @@ module AccessControl
     #
     #   @param action_id [Integer] The action to grant for the object
     #   @param object_type [String] The namespace of the given action_id.
-    #   @return [nil] Returns nil if successful, otherwise will raise an Error (AccessControl::CouldNotGrantError).
+    #   @raise [AccessControl::CouldNotGrantError] if the operation does not succeed
+    #   @return [nil] Returns nil if successful
     #
     #   @example
     #     # Allow the user access to posts
@@ -82,7 +83,8 @@ module AccessControl
     #   @param action_id [Integer] The action to grant for the object
     #   @param object_type [ActiveRecord::Base] The ActiveRecord model that receives a permission grant.
     #   @param object_id [Integer] The id of the ActiveRecord object which receives a permission grant
-    #   @return [nil] Returns nil if successful, otherwise will raise an Error (AccessControl::CouldNotGrantError).
+    #   @raise [AccessControl::CouldNotGrantError] if the operation does not succeed
+    #   @return [nil] Returns nil if successful
     #
     #   @example
     #     # Allow the user access to Post 7
