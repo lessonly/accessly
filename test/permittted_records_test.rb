@@ -46,7 +46,9 @@ describe AccessControl do
     actor1 = User.create!
     actor2 = User.create!
     actor3 = User.create!
-    post  = Post.create!
+    post   = Post.create!
+    group1 = Group.create!
+    group2 = Group.create!
 
     AccessControl::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -64,14 +66,21 @@ describe AccessControl do
       object_id: post.id
     )
 
+    AccessControl::PermittedActionOnObject.create!(
+      id: SecureRandom.uuid,
+      actor: group1,
+      action: 2,
+      object_type: Post,
+      object_id: post.id
+    )
+
     # TODO: Looks like we need to either
     # - support sqlite in WhereTuple
     # - or support only postgresql (and update test_helper to reflect that)
-    AccessControl::Query.new([actor1, [actor2.id, actor2.class.name]]).can?([2,1], Post, post.id).must_equal true
-    AccessControl::Query.new(User.where(id: actor3.id)).can?([1,3], Post, post.id).must_equal true
-    AccessControl::Query.new(actor2).can?([1], Post, post.id).must_equal false
-    AccessControl::Query.new([[actor1.id, actor1.class.name], [actor3.id, actor3.class.name]]).can?(1, Post, post.id).must_equal true
-    AccessControl::Query.new([[actor1.id, actor1.class.name], [actor3.id, actor3.class.name]]).can?([3,2], Post, post.id).must_equal false
-    AccessControl::Query.new([[actor1.id, actor1.class.name], actor2, User.where(id: actor3.id)]).can?([3,2], Post, post.id).must_equal false
+    AccessControl::Query.new(User => actor1.id).can?([2,1], Post, post.id).must_equal true
+    AccessControl::Query.new(User => actor2.id).can?([2,1], Post, post.id).must_equal false
+    AccessControl::Query.new(User => [actor3.id, actor2.id]).can?([1,3], Post, post.id).must_equal true
+    AccessControl::Query.new(User => actor2.id, Group => group1.id).can?(2, Post, post.id).must_equal true
+    AccessControl::Query.new(User => [actor3.id, actor2.id, actor1.id], Group => [group1.id, group2.id]).can?([3,4], Post, post.id).must_equal false
   end
 end

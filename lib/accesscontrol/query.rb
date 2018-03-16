@@ -17,11 +17,14 @@ module AccessControl
     # when you have a user in one or more groups or organizations with their own
     # access control permissions.
     #
-    # @param actor [ActiveRecord::Base] The actor we're checking for permission on
-    # @param actor_groups [Array<Array<Integer, String>>] An array of [id, type] where id is the ID of an actor that actor inherits permissions from and type is the ActiveRecord model class name
-    def initialize(actor)
-      @actor = actor
-      @actor_tuples = construct_actor_tuples(actor)
+    # @param actor [Hash, ActiveRecord::Base] The actor(s) we're checking for permission on
+    def initialize(actors)
+      @actors = case actors
+      when Hash
+        actors
+      else
+        { actors.class.name => actors.id }
+      end
     end
 
     # Check whether an actor has a given permission.
@@ -74,38 +77,12 @@ module AccessControl
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= PermittedActionQuery.new(@actor_tuples)
+      @_permitted_action_query ||= PermittedActionQuery.new(@actors)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor_tuples)
+      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actors)
     end
 
-    def construct_actor_tuples(actor)
-      actor_tuple = []
-      case actor
-      when Array
-        actor.each do |a|
-          actor_tuple += actor_tuples_from_source(a)
-        end
-      else
-        actor_tuple += actor_tuples_from_source(actor)
-      end
-      actor_tuple
-    end
-
-    def actor_tuples_from_source(actor)
-      actor_tuples = case actor
-      when ActiveRecord::Relation
-        actor.pluck(:id).map { |id| [id, actor.model.name] }
-      when Array
-        [actor]
-      when ActiveRecord::Base
-        [[actor.id, actor.class.name]]
-      else
-        [[]]
-      end
-      actor_tuples
-    end
   end
 end

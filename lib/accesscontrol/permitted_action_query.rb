@@ -1,10 +1,10 @@
-require "accesscontrol/where_tuple"
+require "accesscontrol/query_builder"
 
 module AccessControl
   class PermittedActionQuery
 
-    def initialize(actor_tuples)
-      @actor_tuples = actor_tuples
+    def initialize(actors)
+      @actors = actors
     end
 
     # Ask whether the actor has permission to perform action_id
@@ -25,7 +25,7 @@ module AccessControl
     #   AccessControl::General.can?(user, 3, "posts")
     def can?(action_id, object_type)
       find_or_set_value(action_id, object_type) do
-        AccessControl::WhereTuple.where_in(PermittedAction, [:actor_id, :actor_type], @actor_tuples)
+        AccessControl::QueryBuilder.with_actors(PermittedAction, @actors)
           .where(
             action: action_id,
             object_type: String(object_type),

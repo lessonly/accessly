@@ -7,6 +7,7 @@ require "minitest/pride"
 require "active_record"
 require "fixtures/user"
 require "fixtures/post"
+require "fixtures/group"
 require "accesscontrol/models/permitted_action"
 require "accesscontrol/models/permitted_action_on_object"
 require "database_cleaner"
@@ -32,8 +33,8 @@ end
 
 def sqlite_config
   {
-    adapter: "postgresql",
-    database: "aaa_test",
+    adapter: "sqlite3",
+    database: "aaa_test.sqlite3",
     pool: 5,
     timeout: 5000
   }
