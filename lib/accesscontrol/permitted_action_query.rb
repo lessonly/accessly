@@ -31,6 +31,31 @@ module AccessControl
       end
     end
 
+    # Allow permission on a general action in the given namespace represented by object_type.
+    # A grant is universally unique and is enforced at the database level.
+    #
+    # @param action_id [Integer] The action to grant for the object
+    # @param object_type [String] The namespace of the given action_id.
+    # @raise [AccessControl::CouldNotGrantError] if the operation does not succeed
+    # @return [nil] Returns nil if successful
+    #
+    # @example
+    #   # Allow the user access to posts
+    #   AccessControl::Query.new(user).grant(3, "posts")
+    def grant(action_id, object_type)
+      PermittedAction.create!(
+        id: SecureRandom.uuid,
+        actor: @actor,
+        action: action_id,
+        object_type: String(object_type)
+      )
+      nil
+    rescue ActiveRecord::RecordNotUnique
+      nil
+    rescue => e
+      raise AccessControl::CouldNotGrantError.new("Could not grant action #{action_id} on object #{object_type} for actor #{@actor} because #{e}")
+    end
+
     private
 
     def past_lookups
