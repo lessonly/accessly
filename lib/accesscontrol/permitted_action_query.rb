@@ -22,7 +22,7 @@ module AccessControl
     #
     # @example
     #   # Can the user perform the action with id 3 for posts?
-    #   AccessControl::General.can?(user, 3, "posts")
+    #   AccessControl::Query.new(actor).can?(3, Post)
     def can?(action_id, object_type)
       find_or_set_value(action_id, object_type) do
         AccessControl::QueryBuilder.with_actors(PermittedAction, @actors)

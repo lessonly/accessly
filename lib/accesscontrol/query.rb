@@ -17,7 +17,7 @@ module AccessControl
     # when you have a user in one or more groups or organizations with their own
     # access control permissions.
     #
-    # @param actor [Hash, ActiveRecord::Base] The actor(s) we're checking for permission on
+    # @param actor [Hash, ActiveRecord::Base] The actor(s) we're checking permission(s)
     def initialize(actors)
       @actors = case actors
       when Hash

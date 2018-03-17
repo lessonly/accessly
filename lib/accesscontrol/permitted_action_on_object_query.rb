@@ -20,8 +20,8 @@ module AccessControl
     # @return [Boolean] Returns true if actor has been granted the permission on the specified record, false otherwise.
     #
     # @example
-    #   # Can the user perform the action with id 5 for the Post with id 7?
-    #   AccessControl::Records.can?(user, 5, Post, 7)
+    #   # Can the actor perform the action with id 5 for the Post with id 7?
+    #   AccessControl::Query.new(actor).can?(5, Post, 7)
     def can?(action_id, object_type, object_id)
       find_or_set_value(:can, action_id, object_type) do
         AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
