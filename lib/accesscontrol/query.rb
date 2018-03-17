@@ -12,8 +12,8 @@ module AccessControl
 
     # Create an instance of AccessControl::Query.
     # Lookups are cached in the object to prevent redundant calls to the database.
-    # Pass in an array or ActiveRecord::Relation for actor_groups if the actor
-    # inherits some permissions from other actors in the system. This may happen
+    # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)
+    # inherit some permissions from other actors in the system. This may happen
     # when you have a user in one or more groups or organizations with their own
     # access control permissions.
     #
