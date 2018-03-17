@@ -5,8 +5,9 @@ module AccessControl
   # Permission checks directly related to specific ActiveRecord records happen here.
   class PermittedActionOnObjectQuery
 
-    def initialize(actors)
+    def initialize(actors, segment_id)
       @actors = actors
+      @segment_id = (segment_id || -1)
     end
 
     # Ask whether the actor has permission to perform action_id
@@ -26,6 +27,7 @@ module AccessControl
       find_or_set_value(:can, action_id, object_type) do
         AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
           .where(
+            segment_id: @segment_id,
             action: action_id,
             object_type: String(object_type),
             object_id: object_id
@@ -48,6 +50,7 @@ module AccessControl
     def grant(action_id, object_type, object_id)
       PermittedActionOnObject.create!(
         id: SecureRandom.uuid,
+        segment_id: @segment_id,
         actor_type: @actors.keys.first,
         actor_id: @actors.values.first,
         action: action_id,

@@ -27,6 +27,11 @@ module AccessControl
       end
     end
 
+    def on_segment(segment_id)
+      @segment_id = segment_id
+      self
+    end
+
     # Check whether an actor has a given permission.
     # @return [Boolean]
     # @overload can?(actor, action_id, namespace)
@@ -111,11 +116,11 @@ module AccessControl
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= PermittedActionQuery.new(@actors)
+      @_permitted_action_query ||= PermittedActionQuery.new(@actors, @segment_id)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actors)
+      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actors, @segment_id)
     end
 
   end

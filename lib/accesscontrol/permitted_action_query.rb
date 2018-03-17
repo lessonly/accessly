@@ -3,8 +3,9 @@ require "accesscontrol/query_builder"
 module AccessControl
   class PermittedActionQuery
 
-    def initialize(actors)
+    def initialize(actors, segment_id)
       @actors = actors
+      @segment_id = (segment_id || -1)
     end
 
     # Ask whether the actor has permission to perform action_id
@@ -27,6 +28,7 @@ module AccessControl
       find_or_set_value(action_id, object_type) do
         AccessControl::QueryBuilder.with_actors(PermittedAction, @actors)
           .where(
+            segment_id: @segment_id,
             action: action_id,
             object_type: String(object_type),
           ).exists?
@@ -47,6 +49,7 @@ module AccessControl
     def grant(action_id, object_type)
       PermittedAction.create!(
         id: SecureRandom.uuid,
+        segment_id: @segment_id,
         actor_type: @actors.keys.first,
         actor_id: @actors.values.first,
         action: action_id,
