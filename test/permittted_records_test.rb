@@ -1,14 +1,14 @@
-require 'test_helper'
+require "test_helper"
 
 describe AccessControl do
-  it 'returns false when actor lacks access to an object' do
+  it "returns false when actor lacks access to an object" do
     actor = User.create!
     post = Post.create!
 
     AccessControl::Query.new(actor).can?(1, Post, post.id).must_equal false
   end
 
-  it 'retuns true when the actor has access to an object' do
+  it "retuns true when the actor has access to an object" do
     actor = User.create!
     post  = Post.create!
 
@@ -23,7 +23,7 @@ describe AccessControl do
     AccessControl::Query.new(actor).can?(1, Post, post.id).must_equal true
   end
 
-  it 'retuns true when the actor has some sort of access to an object' do
+  it "retuns true when the actor has some sort of access to an object" do
     actor = User.create!
     post  = Post.create!
 
@@ -42,7 +42,7 @@ describe AccessControl do
     AccessControl::Query.new(actor).can?([3,2], Post, post.id).must_equal false
   end
 
-  it 'returns true when one of the actor groups has some sort of access to an object' do
+  it "returns true when one of the actor groups has some sort of access to an object" do
     actor1 = User.create!
     actor2 = User.create!
     actor3 = User.create!

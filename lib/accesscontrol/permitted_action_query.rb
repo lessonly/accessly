@@ -47,7 +47,8 @@ module AccessControl
     def grant(action_id, object_type)
       PermittedAction.create!(
         id: SecureRandom.uuid,
-        actor: @actor,
+        actor_type: @actors.keys.first,
+        actor_id: @actors.values.first,
         action: action_id,
         object_type: String(object_type)
       )
