@@ -1,4 +1,3 @@
-# TODO: Write tests for this
 module AccessControl
   class QueryBuilder
 
@@ -11,7 +10,7 @@ module AccessControl
     # @param actors [Hash] A hash of actors where the key is the object/classname and the value is an Integer or array of Integers
     # @return [ActiveRecord::Relation]
     def self.with_actors(query, actors)
-      result_query = nil;
+      result_query = nil
       actors.each do |key, value|
         result_query = if result_query.nil?
           query.where(actor_type: String(key), actor_id: value)
