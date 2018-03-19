@@ -28,8 +28,10 @@ module AccessControl
       #   @return [nil] Returns nil if successful
       #
       #   @example
-      #     # Allow the user access to posts
-      #     AccessControl::Query.new(user).grant(3, "posts")
+      #     # Allow the user access to posts for action id 3
+      #     AccessControl::Permission::Grant.new(user).grant(3, "posts")
+      #     # Allow the user access to posts for action id 3 on a segment
+      #     AccessControl::Permission::Grant.new(user).on_segment(1).grant(3, "posts")
 
       # @overload grant(action_id, object_type, object_id)
       # Allow permission on an ActiveRecord object.
@@ -42,8 +44,10 @@ module AccessControl
       #   @return [nil] Returns nil if successful
       #
       #   @example
-      #     # Allow the user access to Post 7
-      #     AccessControl::Query.new(user).grant(3, Post, 7)
+      #     # Allow the user access to Post 7 for action id 3
+      #     AccessControl::Permission::Grant.new(user).grant(3, Post, 7)
+      #     # Allow the user access to Post 7 for action id 3 on a segment
+      #     AccessControl::Permission::Grant.new(user).on_segment(1).grant(3, Post, 7)
       def grant(action_id, object_type, object_id = nil)
         if object_id.nil?
           general_action_grant(action_id, object_type)
