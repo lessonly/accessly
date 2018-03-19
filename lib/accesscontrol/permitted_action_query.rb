@@ -1,8 +1,10 @@
+require "accesscontrol/query_builder"
+
 module AccessControl
   class PermittedActionQuery
 
-    def initialize(actor)
-      @actor = actor
+    def initialize(actors)
+      @actors = actors
     end
 
     # Ask whether the actor has permission to perform action_id
@@ -20,14 +22,14 @@ module AccessControl
     #
     # @example
     #   # Can the user perform the action with id 3 for posts?
-    #   AccessControl::General.can?(user, 3, "posts")
+    #   AccessControl::Query.new(actor).can?(3, Post)
     def can?(action_id, object_type)
-      find_or_set_value(@actor.class.name, @actor.id, action_id, object_type) do
-        PermittedAction.where(
-          actor: @actor,
-          action: action_id,
-          object_type: String(object_type),
-        ).exists?
+      find_or_set_value(action_id, object_type) do
+        AccessControl::QueryBuilder.with_actors(PermittedAction, @actors)
+          .where(
+            action: action_id,
+            object_type: String(object_type),
+          ).exists?
       end
     end
 
@@ -45,7 +47,8 @@ module AccessControl
     def grant(action_id, object_type)
       PermittedAction.create!(
         id: SecureRandom.uuid,
-        actor: @actor,
+        actor_type: @actors.keys.first,
+        actor_id: @actors.values.first,
         action: action_id,
         object_type: String(object_type)
       )

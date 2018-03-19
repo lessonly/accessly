@@ -11,12 +11,20 @@ module AccessControl
   class Query
 
     # Create an instance of AccessControl::Query.
-    # Lookups are cached in the object to prevent redundant calls
-    # to the database.
+    # Lookups are cached in the object to prevent redundant calls to the database.
+    # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)
+    # inherit some permissions from other actors in the system. This may happen
+    # when you have a user in one or more groups or organizations with their own
+    # access control permissions.
     #
-    # @param actor [ActiveRecord::Base] The actor we're checking for permission on
-    def initialize(actor)
-      @actor = actor
+    # @param actor [Hash, ActiveRecord::Base] The actor(s) we're checking permission(s)
+    def initialize(actors)
+      @actors = case actors
+      when Hash
+        actors
+      else
+        { actors.class.name => actors.id }
+      end
     end
 
     # Check whether an actor has a given permission.
@@ -103,11 +111,12 @@ module AccessControl
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= PermittedActionQuery.new(@actor)
+      @_permitted_action_query ||= PermittedActionQuery.new(@actors)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor)
+      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actors)
     end
+
   end
 end

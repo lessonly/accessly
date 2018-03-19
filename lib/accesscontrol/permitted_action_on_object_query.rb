@@ -1,10 +1,12 @@
+require "accesscontrol/query_builder"
+
 module AccessControl
 
   # Permission checks directly related to specific ActiveRecord records happen here.
   class PermittedActionOnObjectQuery
 
-    def initialize(actor)
-      @actor = actor
+    def initialize(actors)
+      @actors = actors
     end
 
     # Ask whether the actor has permission to perform action_id
@@ -18,16 +20,16 @@ module AccessControl
     # @return [Boolean] Returns true if actor has been granted the permission on the specified record, false otherwise.
     #
     # @example
-    #   # Can the user perform the action with id 5 for the Post with id 7?
-    #   AccessControl::Records.can?(user, 5, Post, 7)
+    #   # Can the actor perform the action with id 5 for the Post with id 7?
+    #   AccessControl::Query.new(actor).can?(5, Post, 7)
     def can?(action_id, object_type, object_id)
-      find_or_set_value(:can, @actor.class.name, @actor.id, action_id, object_type) do
-        PermittedActionOnObject.where(
-          actor: @actor,
-          action: action_id,
-          object_type: String(object_type),
-          object_id: object_id
-        ).exists?
+      find_or_set_value(:can, action_id, object_type) do
+        AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
+          .where(
+            action: action_id,
+            object_type: String(object_type),
+            object_id: object_id
+          ).exists?
       end
     end
 
@@ -46,7 +48,8 @@ module AccessControl
     def grant(action_id, object_type, object_id)
       PermittedActionOnObject.create!(
         id: SecureRandom.uuid,
-        actor: @actor,
+        actor_type: @actors.keys.first,
+        actor_id: @actors.values.first,
         action: action_id,
         object_type: String(object_type),
         object_id: object_id

@@ -5,6 +5,9 @@ ActiveRecord::Schema.define(version: 1) do
   create_table :posts, force: true do |t|
   end
 
+  create_table :groups, force: true do |t|
+  end
+
   create_table :access_control_permitted_actions, force: true, id: :uuid do |t|
     t.column :segment_id, :integer, default: -1
     t.column :action, :integer, null: false
