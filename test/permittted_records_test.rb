@@ -26,6 +26,7 @@ describe AccessControl do
   it "retuns true when the actor has some sort of access to an object" do
     actor = User.create!
     post  = Post.create!
+    group = Group.create!
 
     AccessControl::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -35,11 +36,30 @@ describe AccessControl do
       object_id: post.id
     )
 
+    AccessControl::PermittedActionOnObject.create!(
+      id: SecureRandom.uuid,
+      segment_id: 1,
+      actor: group,
+      action: 2,
+      object_type: Post,
+      object_id: post.id
+    )
+
     AccessControl::Query.new(actor).can?([2,1], Post, post.id).must_equal true
+    AccessControl::Query.new(actor).on_segment(1).can?([2,1], Post, post.id).must_equal false
+
     AccessControl::Query.new(actor).can?([1,3], Post, post.id).must_equal true
+    AccessControl::Query.new(actor).on_segment(1).can?([1,3], Post, post.id).must_equal false
+
     AccessControl::Query.new(actor).can?([1], Post, post.id).must_equal true
+    AccessControl::Query.new(actor).on_segment(1).can?([1], Post, post.id).must_equal false
+
     AccessControl::Query.new(actor).can?(1, Post, post.id).must_equal true
+    AccessControl::Query.new(actor).on_segment(1).can?(1, Post, post.id).must_equal false
+
     AccessControl::Query.new(actor).can?([3,2], Post, post.id).must_equal false
+    AccessControl::Query.new(group).can?([3,2], Post, post.id).must_equal false
+    AccessControl::Query.new(group).on_segment(1).can?([3,2], Post, post.id).must_equal true
   end
 
   it "returns true when one of the actor groups has some sort of access to an object" do
@@ -74,13 +94,26 @@ describe AccessControl do
       object_id: post.id
     )
 
-    # TODO: Looks like we need to either
-    # - support sqlite in WhereTuple
-    # - or support only postgresql (and update test_helper to reflect that)
+    AccessControl::PermittedActionOnObject.create!(
+      id: SecureRandom.uuid,
+      segment_id: 1,
+      actor: group1,
+      action: 5,
+      object_type: Post,
+      object_id: post.id
+    )
+
     AccessControl::Query.new(User => actor1.id).can?([2,1], Post, post.id).must_equal true
+    AccessControl::Query.new(User => actor1.id).on_segment(1).can?([2,1], Post, post.id).must_equal false
+
     AccessControl::Query.new(User => actor2.id).can?([2,1], Post, post.id).must_equal false
-    AccessControl::Query.new(User => [actor3.id, actor2.id]).can?([1,3], Post, post.id).must_equal true
+    AccessControl::Query.new(User => actor2.id).on_segment(1).can?([2,1], Post, post.id).must_equal false
+
     AccessControl::Query.new(User => actor2.id, Group => group1.id).can?(2, Post, post.id).must_equal true
+    AccessControl::Query.new(User => actor2.id, Group => group1.id).on_segment(1).can?(2, Post, post.id).must_equal false
+
+    AccessControl::Query.new(User => [actor3.id, actor2.id]).can?([1,3], Post, post.id).must_equal true
     AccessControl::Query.new(User => [actor3.id, actor2.id, actor1.id], Group => [group1.id, group2.id]).can?([3,4], Post, post.id).must_equal false
+    AccessControl::Query.new(group1).on_segment(1).can?(5, Post, post.id).must_equal true
   end
 end
