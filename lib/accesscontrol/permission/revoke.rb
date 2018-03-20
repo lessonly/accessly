@@ -18,8 +18,8 @@ module AccessControl
 
       # Revoke a permission for an actor.
       # @return [nil]
-      # @overload revoke(action_id, object_type)
-      #   Reoking permission on a general action in the given namespace represented by object_type.
+      # @overload revoke!(action_id, object_type)
+      #   Revoke permission on a general action in the given namespace represented by object_type.
       #
       #   @param action_id [Integer] The action to revoke
       #   @param object_type [String] The namespace of the given action_id.
@@ -28,12 +28,12 @@ module AccessControl
       #
       #   @example
       #     # Remove user access to posts for action id 3
-      #     AccessControl::Permission::Revoke.new(user).revoke(3, Post)
+      #     AccessControl::Permission::Revoke.new(user).revoke!(3, Post)
       #     # Remove user access to posts for action id 3 on a segment
-      #     AccessControl::Permission::Revoke.new(user).on_segment(1).revoke(3, Post)
-
-      # @overload revoke(action_id, object_type, object_id)
-      # Revoke permission on an ActiveRecord object.
+      #     AccessControl::Permission::Revoke.new(user).on_segment(1).revoke!(3, Post)
+      #
+      # @overload revoke!(action_id, object_type, object_id)
+      #   Revoke permission on an ActiveRecord object.
       #
       #   @param action_id [Integer] The action to revoke
       #   @param object_type [ActiveRecord::Base] The ActiveRecord model that removes a permission.
@@ -43,10 +43,10 @@ module AccessControl
       #
       #   @example
       #     # Remove user access to Post 7 for action id 3
-      #     AccessControl::Permission::Revoke.new(user).revoke(3, Post, 7)
+      #     AccessControl::Permission::Revoke.new(user).revoke!(3, Post, 7)
       #     # Remove user access to Post 7 for action id 3 on a segment
-      #     AccessControl::Permission::Revoke.new(user).on_segment(1).revoke(3, Post, 7)
-      def revoke(action_id, object_type, object_id = nil)
+      #     AccessControl::Permission::Revoke.new(user).on_segment(1).revoke!(3, Post, 7)
+      def revoke!(action_id, object_type, object_id = nil)
         if object_id.nil?
           general_action_revoke(action_id, object_type)
         else

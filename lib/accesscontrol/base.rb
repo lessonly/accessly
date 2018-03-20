@@ -4,6 +4,7 @@ require "accesscontrol/permitted_actions/on_object_query"
 
 module AccessControl
   class Base
+
     # Create an instance of AccessControl::Base.
     # Lookups are cached in inherited object(s) to prevent redundant calls to the database.
     # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)

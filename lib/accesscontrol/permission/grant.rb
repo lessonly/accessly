@@ -18,7 +18,7 @@ module AccessControl
 
       # Grant a permission to an actor.
       # @return [nil]
-      # @overload grant(action_id, object_type)
+      # @overload grant!(action_id, object_type)
       #   Allow permission on a general action in the given namespace represented by object_type.
       #   A grant is universally unique and is enforced at the database level.
       #
@@ -29,13 +29,13 @@ module AccessControl
       #
       #   @example
       #     # Allow the user access to posts for action id 3
-      #     AccessControl::Permission::Grant.new(user).grant(3, "posts")
+      #     AccessControl::Permission::Grant.new(user).grant!(3, "posts")
       #     # Allow the user access to posts for action id 3 on a segment
-      #     AccessControl::Permission::Grant.new(user).on_segment(1).grant(3, "posts")
-
-      # @overload grant(action_id, object_type, object_id)
-      # Allow permission on an ActiveRecord object.
-      # A grant is universally unique and is enforced at the database level.
+      #     AccessControl::Permission::Grant.new(user).on_segment(1).grant!(3, "posts")
+      #
+      # @overload grant!(action_id, object_type, object_id)
+      #   Allow permission on an ActiveRecord object.
+      #   A grant is universally unique and is enforced at the database level.
       #
       #   @param action_id [Integer] The action to grant for the object
       #   @param object_type [ActiveRecord::Base] The ActiveRecord model that receives a permission grant.
@@ -45,10 +45,10 @@ module AccessControl
       #
       #   @example
       #     # Allow the user access to Post 7 for action id 3
-      #     AccessControl::Permission::Grant.new(user).grant(3, Post, 7)
+      #     AccessControl::Permission::Grant.new(user).grant!(3, Post, 7)
       #     # Allow the user access to Post 7 for action id 3 on a segment
-      #     AccessControl::Permission::Grant.new(user).on_segment(1).grant(3, Post, 7)
-      def grant(action_id, object_type, object_id = nil)
+      #     AccessControl::Permission::Grant.new(user).on_segment(1).grant!(3, Post, 7)
+      def grant!(action_id, object_type, object_id = nil)
         if object_id.nil?
           general_action_grant(action_id, object_type)
         else

@@ -6,22 +6,22 @@ describe AccessControl do
     actor = User.create!
     post = Post.create!
 
-    assert_nil(AccessControl::Permission::Grant.new(actor).grant(1, Post, post.id))
+    assert_nil(AccessControl::Permission::Grant.new(actor).grant!(1, Post, post.id))
   end
 
   it "returns nil after a successful grant on a segment" do
     actor = User.create!
     post = Post.create!
 
-    assert_nil(AccessControl::Permission::Grant.new(actor).on_segment(1).grant(1, Post, post.id))
+    assert_nil(AccessControl::Permission::Grant.new(actor).on_segment(1).grant!(1, Post, post.id))
   end
 
   it "returns nil after a duplicate grant with one record in the database" do
     actor = User.create!
     post = Post.create!
 
-    assert_nil(AccessControl::Permission::Grant.new(actor).grant(1, Post, post.id))
-    assert_nil(AccessControl::Permission::Grant.new(actor).grant(1, Post, post.id))
+    assert_nil(AccessControl::Permission::Grant.new(actor).grant!(1, Post, post.id))
+    assert_nil(AccessControl::Permission::Grant.new(actor).grant!(1, Post, post.id))
     AccessControl::PermittedActionOnObject.where(actor: actor).count.must_equal 1
   end
 
@@ -29,8 +29,8 @@ describe AccessControl do
     actor = User.create!
     post = Post.create!
 
-    assert_nil(AccessControl::Permission::Grant.new(actor).on_segment(1).grant(1, Post, post.id))
-    assert_nil(AccessControl::Permission::Grant.new(actor).on_segment(1).grant(1, Post, post.id))
+    assert_nil(AccessControl::Permission::Grant.new(actor).on_segment(1).grant!(1, Post, post.id))
+    assert_nil(AccessControl::Permission::Grant.new(actor).on_segment(1).grant!(1, Post, post.id))
     AccessControl::PermittedActionOnObject.where(actor: actor, segment_id: 1).count.must_equal 1
   end
 
@@ -39,7 +39,7 @@ describe AccessControl do
     post = Post.create!
 
     assert_raises(AccessControl::GrantError) do
-      AccessControl::Permission::Grant.new(actor).grant(nil, Post, post.id)
+      AccessControl::Permission::Grant.new(actor).grant!(nil, Post, post.id)
     end
   end
 
@@ -48,7 +48,7 @@ describe AccessControl do
     post = Post.create!
 
     assert_raises(AccessControl::GrantError) do
-      AccessControl::Permission::Grant.new(User => actor.id).grant(1, Post, post.id)
+      AccessControl::Permission::Grant.new(User => actor.id).grant!(1, Post, post.id)
     end
   end
 end

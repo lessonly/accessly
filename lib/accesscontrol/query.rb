@@ -2,20 +2,33 @@ require "accesscontrol/base"
 
 module AccessControl
   # AccessControl::Query is the interface that hides the implementation
-  # of the data layer. Tell AccessControl::Query when to grant and revoke
-  # permissions, ask it whether an actor has permission on a
-  # record, ask it for a list of permitted records for the record
+  # of the data layer. Ask AccessControl::Query whether an actor
+  # has permission on a record, ask it for a list of permitted records for the record
   # type, and ask it whether an actor has a general permission not
   # related to any certain record or record type.
   class Query < Base
 
+    # Create an instance of AccessControl::Query.
+    # Lookups are cached in inherited object(s) to prevent redundant calls to the database.
+    # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)
+    # inherit some permissions from other actors in the system. This may happen
+    # when you have a user in one or more groups or organizations with their own
+    # access control permissions.
+    #
+    # @param actors [Hash, ActiveRecord::Base] The actor(s) we're checking permission(s)
+    #
+    # @example
+    #   # Create a new object with a single actor
+    #   AccessControl::Query.new(user)
+    #   # Create a new object with multiple actors
+    #   AccessControl::Query.new(User => user.id, Group => [1,2], Organization => Organization.where(user_id: user.id).pluck(:id))
     def initialize(actors)
       super(actors)
     end
 
     # Check whether an actor has a given permission.
     # @return [Boolean]
-    # @overload can?(actor, action_id, namespace)
+    # @overload can?(action_id, namespace)
     #   Ask whether the actor has permission to perform action_id
     #   in the given namespace. Multiple actions can have the same id
     #   as long as their namespace is different. The namespace can be
@@ -39,7 +52,7 @@ module AccessControl
     #     # Can the sets of actors on segment 1 perform the action with id 5 for Posts
     #     AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post)
     #
-    # @overload can?(actor, action_id, object_type, object_id)
+    # @overload can?(action_id, object_type, object_id)
     #   Ask whether the actor has permission to perform action_id
     #   on a given record.
     #

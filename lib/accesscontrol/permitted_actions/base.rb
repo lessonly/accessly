@@ -19,7 +19,7 @@ module AccessControl
         found_value = past_lookups.dig(*keys)
 
         if found_value.nil?
-          found_value =  query.call
+          found_value = query.call
           set_value(*keys, value: found_value)
         end
 
