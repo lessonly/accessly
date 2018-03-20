@@ -66,6 +66,7 @@ module AccessControl
     end
 
     def list(action_id, object_type)
+      permitted_action_on_object_query.list(action_id, object_type)
     end
 
     private

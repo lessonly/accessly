@@ -11,6 +11,10 @@ module AccessControl
     RevokeError = Class.new(StandardError)
   end
 
+  unless defined?(ListError) == "constant" && ListError.class == Class
+    ListError = Class.new(StandardError)
+  end
+
   # AccessControl's tables are prefixed with access_control to
   # prevent any naming conflicts with other tables in the database.
   def self.table_name_prefix

@@ -32,6 +32,37 @@ module AccessControl
             ).exists?
         end
       end
+
+      # Returns an ActiveRecord::Relation of object_type containing the
+      # records on which the actor has permission to perform action_id.
+      #
+      # @param action_id [Integer] The action we're checking on the actor for the object.
+      # @param object_type [ActiveRecord::Base] The ActiveRecord model to be loaded.
+      # @raise [AccessControl::ListError] if the object_type is not of type ActiveRecord::Base
+      # @return [ActiveRecord::Relation]
+      #
+      # @example
+      #   # Give me the list of Posts on which the user has permission to perform action_id 3
+      #   AccessControl::Query.new(user).list(3, Post)
+      #   # Give me the list of Posts on which the user has permission to perform action_id 3 on segment 1
+      #   AccessControl::Query.new(user).on_segment(1).list(3, Post)
+      #   # Give me the list of Posts on which the user and its groups has permission to perform action_id 3
+      #   AccessControl::Query.new(User => user.id, Group => [1,2]).list(3, Post)
+      #   # Give me the list of Posts on which the user and its groups has permission to perform action_id 3 on segment 1
+      #   AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
+
+      def list(action_id, object_type)
+        raise AccessControl::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.new.is_a? ActiveRecord::Base
+
+        object_type.where(id:
+          AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
+            .where(
+              segment_id: @segment_id,
+              action: action_id,
+              object_type: String(object_type),
+            ).select(:object_id)
+        )
+      end
     end
   end
 end
