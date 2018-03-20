@@ -5,7 +5,7 @@ describe AccessControl do
   it "raises a ListError if object_type is not of ActiveRecord::Base" do
     actor1 = User.create!
     assert_raises(AccessControl::ListError) do
-      AccessControl::Query.new(actor1).list(1, Class)
+      AccessControl::Query.new(actor1).list(1, {})
     end
   end
 

@@ -1,4 +1,3 @@
-
 module AccessControl
   module PermittedActions
     class OnObjectQuery < Base
@@ -52,7 +51,7 @@ module AccessControl
       #   AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
 
       def list(action_id, object_type)
-        raise AccessControl::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.new.is_a? ActiveRecord::Base
+        raise AccessControl::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.class === ActiveRecord::Base
 
         object_type.where(id:
           AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
