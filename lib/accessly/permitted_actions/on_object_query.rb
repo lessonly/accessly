@@ -22,7 +22,7 @@ module Accessly
       #   Accessly::Query.new(user).on_segment(1).can?(5, Post, 7)
       def can?(action_id, object_type, object_id)
         find_or_set_value(action_id, object_type, object_id) do
-          Accessly::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
+          Accessly::QueryBuilder.with_actors(Accessly::PermittedActionOnObject, @actors)
             .where(
               segment_id: @segment_id,
               action: action_id,
