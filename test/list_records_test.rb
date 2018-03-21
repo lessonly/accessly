@@ -9,6 +9,13 @@ describe AccessControl do
     end
   end
 
+  it "raises a ListError if action_id is not an Integer" do
+    actor1 = User.create!
+    assert_raises(AccessControl::ListError) do
+      AccessControl::Query.new(actor1).list([1], Post)
+    end
+  end
+
   it "returns a list of objects" do
     actor1 = User.create!
     actor2 = User.create!

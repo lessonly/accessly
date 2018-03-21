@@ -52,6 +52,7 @@ module AccessControl
 
       def list(action_id, object_type)
         raise AccessControl::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.class === ActiveRecord::Base
+        raise AccessControl::ListError.new("action_id must be an Integer") unless action_id.class == Integer
 
         object_type.where(id:
           AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
