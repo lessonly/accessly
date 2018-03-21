@@ -22,7 +22,7 @@ module AccessControl
       #   # Can the user perform the action with id 5 for the Post with id 7 on segment 1?
       #   AccessControl::Query.new(user).on_segment(1).can?(5, Post, 7)
       def can?(action_id, object_type, object_id)
-        find_or_set_value(:can, action_id, object_type, object_id) do
+        find_or_set_value(action_id, object_type, object_id) do
           AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
             .where(
               segment_id: @segment_id,
