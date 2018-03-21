@@ -37,25 +37,25 @@ module Accessly
       #
       # @param action_id [Integer] The action we're checking on the actor for the object.
       # @param object_type [ActiveRecord::Base] The ActiveRecord model to be loaded.
-      # @raise [AccessControl::ListError] if the object_type is not of type ActiveRecord::Base
+      # @raise [Accessly::ListError] if the object_type is not of type ActiveRecord::Base
       # @return [ActiveRecord::Relation]
       #
       # @example
       #   # Give me the list of Posts on which the user has permission to perform action_id 3
-      #   AccessControl::Query.new(user).list(3, Post)
+      #   Accessly::Query.new(user).list(3, Post)
       #   # Give me the list of Posts on which the user has permission to perform action_id 3 on segment 1
-      #   AccessControl::Query.new(user).on_segment(1).list(3, Post)
+      #   Accessly::Query.new(user).on_segment(1).list(3, Post)
       #   # Give me the list of Posts on which the user and its groups has permission to perform action_id 3
-      #   AccessControl::Query.new(User => user.id, Group => [1,2]).list(3, Post)
+      #   Accessly::Query.new(User => user.id, Group => [1,2]).list(3, Post)
       #   # Give me the list of Posts on which the user and its groups has permission to perform action_id 3 on segment 1
-      #   AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
+      #   Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
 
       def list(action_id, object_type)
-        raise AccessControl::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.class === ActiveRecord::Base
-        raise AccessControl::ListError.new("action_id must be an Integer") unless action_id.class == Integer
+        raise Accessly::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.class === ActiveRecord::Base
+        raise Accessly::ListError.new("action_id must be an Integer") unless action_id.class == Integer
 
         object_type.where(id:
-          AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, @actors)
+          Accessly::QueryBuilder.with_actors(Accessly::PermittedActionOnObject, @actors)
             .where(
               segment_id: @segment_id,
               action: action_id,
