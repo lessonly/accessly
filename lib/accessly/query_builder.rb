@@ -1,10 +1,10 @@
-module AccessControl
+module Accessly
   class QueryBuilder
 
     # Builds a query with a series of actors 'OR' together
     #
     # Use like this:
-    # `AccessControl::QueryBuilder.with_actors(PermittedActionOnObject, {User => 1, Group => [2,3]})`
+    # `Accessly::QueryBuilder.with_actors(PermittedActionOnObject, {User => 1, Group => [2,3]})`
     #
     # @param query [ActiveRecord::Relation] The relation on which to append the where clause
     # @param actors [Hash] A hash of actors where the key is the object/classname and the value is an Integer or array of Integers

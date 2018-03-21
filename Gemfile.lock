@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    access_control_rails (0.0.1)
+    accessly (0.0.1)
       activerecord (>= 5.0)
 
 GEM
@@ -34,7 +34,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  access_control_rails!
+  accessly!
   bundler (~> 1.16)
   database_cleaner
   minitest (~> 5.0)

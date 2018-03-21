@@ -1,3 +1,3 @@
-module Accesscontrol
+module Accessly
   VERSION = "0.0.1"
 end

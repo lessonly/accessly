@@ -1,10 +1,11 @@
-require "accesscontrol/permitted_actions/query"
-require "accesscontrol/permitted_actions/on_object_query"
+require "accessly/permitted_actions/query"
+require "accessly/permitted_actions/on_object_query"
 
 
-module AccessControl
+module Accessly
   class Base
-    # Create an instance of AccessControl::Base.
+
+    # Create an instance of Accessly::Base.
     # Lookups are cached in inherited object(s) to prevent redundant calls to the database.
     # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)
     # inherit some permissions from other actors in the system. This may happen
@@ -23,7 +24,7 @@ module AccessControl
     end
 
     # @param segment_id [Integer] The segment to further separate permissions requests
-    # @return [AccessControl::Base] returns the object caller
+    # @return [Accessly::Base] returns the object caller
     def on_segment(segment_id)
       @segment_id = segment_id
       self
