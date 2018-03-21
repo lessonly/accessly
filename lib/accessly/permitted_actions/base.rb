@@ -1,6 +1,6 @@
-require "accesscontrol/query_builder"
+require "accessly/query_builder"
 
-module AccessControl
+module Accessly
   module PermittedActions
     class Base
 
