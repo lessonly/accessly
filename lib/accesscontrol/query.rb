@@ -1,27 +1,34 @@
-require "accesscontrol/permitted_action_on_object_query"
-require "accesscontrol/permitted_action_query"
+require "accesscontrol/base"
 
 module AccessControl
   # AccessControl::Query is the interface that hides the implementation
-  # of the data layer. Tell AccessControl::Query when to grant and revoke
-  # permissions, ask it whether an actor has permission on a
-  # record, ask it for a list of permitted records for the record
+  # of the data layer. Ask AccessControl::Query whether an actor
+  # has permission on a record, ask it for a list of permitted records for the record
   # type, and ask it whether an actor has a general permission not
   # related to any certain record or record type.
-  class Query
+  class Query < Base
 
     # Create an instance of AccessControl::Query.
-    # Lookups are cached in the object to prevent redundant calls
-    # to the database.
+    # Lookups are cached in inherited object(s) to prevent redundant calls to the database.
+    # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)
+    # inherit some permissions from other actors in the system. This may happen
+    # when you have a user in one or more groups or organizations with their own
+    # access control permissions.
     #
-    # @param actor [ActiveRecord::Base] The actor we're checking for permission on
-    def initialize(actor)
-      @actor = actor
+    # @param actors [Hash, ActiveRecord::Base] The actor(s) we're checking permission(s)
+    #
+    # @example
+    #   # Create a new object with a single actor
+    #   AccessControl::Query.new(user)
+    #   # Create a new object with multiple actors
+    #   AccessControl::Query.new(User => user.id, Group => [1,2], Organization => Organization.where(user_id: user.id).pluck(:id))
+    def initialize(actors)
+      super(actors)
     end
 
     # Check whether an actor has a given permission.
     # @return [Boolean]
-    # @overload can?(actor, action_id, namespace)
+    # @overload can?(action_id, namespace)
     #   Ask whether the actor has permission to perform action_id
     #   in the given namespace. Multiple actions can have the same id
     #   as long as their namespace is different. The namespace can be
@@ -36,8 +43,16 @@ module AccessControl
     #   @example
     #     # Can the user perform the action with id 3 for posts?
     #     AccessControl.can?(user, 3, "posts")
+    #     # Can the user perform the action with id 5 for Posts?
+    #     AccessControl::Query.new(user).can?(5, Post)
+    #     # Can the sets of actors perform the action with id 5 for Posts?
+    #     AccessControl::Query.new(User => user.id, Group => [1,2]).can?(5, Post)
+    #     # Can the user on segment 1 perform the action with id 5 for Posts
+    #     AccessControl::Query.new(user).on_segment(1).can?(5, Post)
+    #     # Can the sets of actors on segment 1 perform the action with id 5 for Posts
+    #     AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post)
     #
-    # @overload can?(actor, action_id, object_type, object_id)
+    # @overload can?(action_id, object_type, object_id)
     #   Ask whether the actor has permission to perform action_id
     #   on a given record.
     #
@@ -48,7 +63,13 @@ module AccessControl
     #
     #   @example
     #     # Can the user perform the action with id 5 for the Post with id 7?
-    #     AccessControl.can?(user, 5, Post, 7)
+    #     AccessControl::Query.new(user).can?(5, Post, 7)
+    #     # Can the sets of actors perform the action with id 5 for the Post with id 7?
+    #     AccessControl::Query.new(User => user.id, Group => [1,2]).can?(5, Post, 7)
+    #     # Can the user on segment 1 perform the action with id 5 for the Post with id 7?
+    #     AccessControl::Query.new(user).on_segment(1).can?(5, Post, 7)
+    #     # Can the sets of actors on segment 1 perform the action with id 5 for the Post with id 7?
+    #     AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post, 7)
     def can?(action_id, object_type, object_id = nil)
       if object_id.nil?
         permitted_action_query.can?(action_id, object_type)
@@ -60,54 +81,14 @@ module AccessControl
     def list(action_id, object_type)
     end
 
-
-    # Grant a permission to an actor.
-    # @return [nil]
-    # @overload grant(actor, action_id, object_type)
-    #   Allow permission on a general action in the given namespace represented by object_type.
-    #   A grant is universally unique and is enforced at the database level.
-    #
-    #   @param action_id [Integer] The action to grant for the object
-    #   @param object_type [String] The namespace of the given action_id.
-    #   @raise [AccessControl::CouldNotGrantError] if the operation does not succeed
-    #   @return [nil] Returns nil if successful
-    #
-    #   @example
-    #     # Allow the user access to posts
-    #     AccessControl::Query.new(user).grant(3, "posts")
-
-    # @overload grant(actor, action_id, object_type, object_id)
-    # Allow permission on an ActiveRecord object.
-    # A grant is universally unique and is enforced at the database level.
-    #
-    #   @param action_id [Integer] The action to grant for the object
-    #   @param object_type [ActiveRecord::Base] The ActiveRecord model that receives a permission grant.
-    #   @param object_id [Integer] The id of the ActiveRecord object which receives a permission grant
-    #   @raise [AccessControl::CouldNotGrantError] if the operation does not succeed
-    #   @return [nil] Returns nil if successful
-    #
-    #   @example
-    #     # Allow the user access to Post 7
-    #     AccessControl::Query.new(user).grant(3, Post, 7)
-    def grant(action_id, object_type, object_id = nil)
-      if object_id.nil?
-        permitted_action_query.grant(action_id, object_type)
-      else
-        permitted_action_on_object_query.grant(action_id, object_type, object_id)
-      end
-    end
-
-    def revoke(action_id, object_type, object_id = nil)
-    end
-
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= PermittedActionQuery.new(@actor)
+      @_permitted_action_query ||= AccessControl::PermittedActions::Query.new(@actors, @segment_id)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= PermittedActionOnObjectQuery.new(@actor)
+      @_permitted_action_on_object_query ||= AccessControl::PermittedActions::OnObjectQuery.new(@actors, @segment_id)
     end
   end
 end
