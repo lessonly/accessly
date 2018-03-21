@@ -1,7 +1,7 @@
-require "accesscontrol/version"
-require "accesscontrol/query"
+require "accessly/version"
+require "accessly/query"
 
-module AccessControl
+module Accessly
 
   unless defined?(GrantError) == "constant" && GrantError.class == Class
     GrantError = Class.new(StandardError)
@@ -11,9 +11,9 @@ module AccessControl
     RevokeError = Class.new(StandardError)
   end
 
-  # AccessControl's tables are prefixed with access_control to
+  # Accessly's tables are prefixed with accessly_ to
   # prevent any naming conflicts with other tables in the database.
   def self.table_name_prefix
-    "access_control_"
+    "accessly_"
   end
 end

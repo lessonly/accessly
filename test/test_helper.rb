@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
-require "accesscontrol"
+require "accessly"
 require "bundler/setup"
 
 require "minitest/autorun"
@@ -8,10 +8,10 @@ require "active_record"
 require "fixtures/user"
 require "fixtures/post"
 require "fixtures/group"
-require "accesscontrol/permission/grant"
-require "accesscontrol/permission/revoke"
-require "accesscontrol/models/permitted_action"
-require "accesscontrol/models/permitted_action_on_object"
+require "accessly/permission/grant"
+require "accessly/permission/revoke"
+require "accessly/models/permitted_action"
+require "accessly/models/permitted_action_on_object"
 require "database_cleaner"
 
 def prepare_for_tests

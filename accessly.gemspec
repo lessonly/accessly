@@ -1,17 +1,17 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "accesscontrol/version"
+require "accessly/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "access_control_rails"
-  spec.version       = Accesscontrol::VERSION
+  spec.name          = "accessly"
+  spec.version       = Accessly::VERSION
   spec.authors       = ["Aaron Milam", "Eddie Hourigan", "Ross Reinhardt"]
   spec.email         = ["devops@lessonly.com"]
 
   spec.summary       = %q{Simplified access control in Rails}
   spec.description   = %q{Simplified access control in Rails!}
-  spec.homepage      = "https://github.com/lessonly/accesscontrol"
+  spec.homepage      = "https://github.com/lessonly/accessly"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|

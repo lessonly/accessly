@@ -1,6 +1,6 @@
-require "accesscontrol/permitted_actions/base"
+require "accessly/permitted_actions/base"
 
-module AccessControl
+module Accessly
   module PermittedActions
     class Query < Base
 
@@ -23,12 +23,12 @@ module AccessControl
       #
       # @example
       #   # Can the user perform the action with id 3 for posts?
-      #   AccessControl::Query.new(user).can?(3, Post)
+      #   Accessly::Query.new(user).can?(3, Post)
       #   # Can the user perform the action with id 3 for posts on segment 1?
-      #   AccessControl::Query.new(user).on_segment(1).can?(3, Post)
+      #   Accessly::Query.new(user).on_segment(1).can?(3, Post)
       def can?(action_id, object_type)
         find_or_set_value(action_id, object_type) do
-          AccessControl::QueryBuilder.with_actors(PermittedAction, @actors)
+          Accessly::QueryBuilder.with_actors(Accessly::PermittedAction, @actors)
             .where(
               segment_id: @segment_id,
               action: action_id,

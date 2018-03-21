@@ -1,14 +1,14 @@
-require "accesscontrol/base"
+require "accessly/base"
 
-module AccessControl
-  # AccessControl::Query is the interface that hides the implementation
-  # of the data layer. Ask AccessControl::Query whether an actor
+module Accessly
+  # Accessly::Query is the interface that hides the implementation
+  # of the data layer. Ask Accessly::Query whether an actor
   # has permission on a record, ask it for a list of permitted records for the record
   # type, and ask it whether an actor has a general permission not
   # related to any certain record or record type.
   class Query < Base
 
-    # Create an instance of AccessControl::Query.
+    # Create an instance of Accessly::Query.
     # Lookups are cached in inherited object(s) to prevent redundant calls to the database.
     # Pass in a Hash or ActiveRecord::Base for actors if the actor(s)
     # inherit some permissions from other actors in the system. This may happen
@@ -19,9 +19,9 @@ module AccessControl
     #
     # @example
     #   # Create a new object with a single actor
-    #   AccessControl::Query.new(user)
+    #   Accessly::Query.new(user)
     #   # Create a new object with multiple actors
-    #   AccessControl::Query.new(User => user.id, Group => [1,2], Organization => Organization.where(user_id: user.id).pluck(:id))
+    #   Accessly::Query.new(User => user.id, Group => [1,2], Organization => Organization.where(user_id: user.id).pluck(:id))
     def initialize(actors)
       super(actors)
     end
@@ -42,15 +42,15 @@ module AccessControl
     #
     #   @example
     #     # Can the user perform the action with id 3 for posts?
-    #     AccessControl.can?(user, 3, "posts")
+    #     Accessly.can?(user, 3, "posts")
     #     # Can the user perform the action with id 5 for Posts?
-    #     AccessControl::Query.new(user).can?(5, Post)
+    #     Accessly::Query.new(user).can?(5, Post)
     #     # Can the sets of actors perform the action with id 5 for Posts?
-    #     AccessControl::Query.new(User => user.id, Group => [1,2]).can?(5, Post)
+    #     Accessly::Query.new(User => user.id, Group => [1,2]).can?(5, Post)
     #     # Can the user on segment 1 perform the action with id 5 for Posts
-    #     AccessControl::Query.new(user).on_segment(1).can?(5, Post)
+    #     Accessly::Query.new(user).on_segment(1).can?(5, Post)
     #     # Can the sets of actors on segment 1 perform the action with id 5 for Posts
-    #     AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post)
+    #     Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post)
     #
     # @overload can?(action_id, object_type, object_id)
     #   Ask whether the actor has permission to perform action_id
@@ -63,13 +63,13 @@ module AccessControl
     #
     #   @example
     #     # Can the user perform the action with id 5 for the Post with id 7?
-    #     AccessControl::Query.new(user).can?(5, Post, 7)
+    #     Accessly::Query.new(user).can?(5, Post, 7)
     #     # Can the sets of actors perform the action with id 5 for the Post with id 7?
-    #     AccessControl::Query.new(User => user.id, Group => [1,2]).can?(5, Post, 7)
+    #     Accessly::Query.new(User => user.id, Group => [1,2]).can?(5, Post, 7)
     #     # Can the user on segment 1 perform the action with id 5 for the Post with id 7?
-    #     AccessControl::Query.new(user).on_segment(1).can?(5, Post, 7)
+    #     Accessly::Query.new(user).on_segment(1).can?(5, Post, 7)
     #     # Can the sets of actors on segment 1 perform the action with id 5 for the Post with id 7?
-    #     AccessControl::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post, 7)
+    #     Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post, 7)
     def can?(action_id, object_type, object_id = nil)
       if object_id.nil?
         permitted_action_query.can?(action_id, object_type)
@@ -84,11 +84,11 @@ module AccessControl
     private
 
     def permitted_action_query
-      @_permitted_action_query ||= AccessControl::PermittedActions::Query.new(@actors, @segment_id)
+      @_permitted_action_query ||= Accessly::PermittedActions::Query.new(@actors, @segment_id)
     end
 
     def permitted_action_on_object_query
-      @_permitted_action_on_object_query ||= AccessControl::PermittedActions::OnObjectQuery.new(@actors, @segment_id)
+      @_permitted_action_on_object_query ||= Accessly::PermittedActions::OnObjectQuery.new(@actors, @segment_id)
     end
   end
 end
