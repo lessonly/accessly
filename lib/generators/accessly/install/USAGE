@@ -1,0 +1,5 @@
+Description:
+  Install Accessly components inside a rails project
+
+Example:
+    rails generate accessly:install
