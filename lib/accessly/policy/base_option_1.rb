@@ -1,6 +1,6 @@
 module Accessly
   module Policy
-    class Base
+    class BaseOption1
 
       def initialize(actors)
         @actors = actors
