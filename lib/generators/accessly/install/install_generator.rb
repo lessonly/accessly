@@ -1,4 +1,4 @@
-require "rails/generators/base"
+require "rails/generators"
 require "rails/generators/active_record"
 
 module Accessly
