@@ -2,8 +2,10 @@ module Accessly
   module Policy
     class BaseOption1
 
-      def initialize(actors)
-        @actors = actors
+      attr_reader :actor
+
+      def initialize(actor)
+        @actor = actor
       end
 
       def self.actions(actions)
@@ -29,7 +31,7 @@ module Accessly
       end
 
       def accessly_query
-        @_accessly_query ||= Accessly::Query.new(@actors)
+        @_accessly_query ||= Accessly::Query.new(actor)
       end
 
       private
