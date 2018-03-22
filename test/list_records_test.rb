@@ -4,16 +4,14 @@ describe Accessly do
 
   it "raises a ListError if object_type is not of ActiveRecord::Base" do
     actor1 = User.create!
-    assert_raises(Accessly::ListError) do
-      Accessly::Query.new(actor1).list(1, {})
-    end
+
+    proc { Accessly::Query.new(actor1).list(1, {}) }.must_raise Accessly::ListError
   end
 
   it "raises a ListError if action_id is not an Integer" do
     actor1 = User.create!
-    assert_raises(Accessly::ListError) do
-      Accessly::Query.new(actor1).list([1], Post)
-    end
+
+    proc { Accessly::Query.new(actor1).list([1], Post) }.must_raise Accessly::ListError
   end
 
   it "returns a list of objects" do
