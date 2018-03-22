@@ -11,10 +11,6 @@ module Accessly
     RevokeError = Class.new(StandardError)
   end
 
-  unless defined?(ListError) == "constant" && ListError.class == Class
-    ListError = Class.new(StandardError)
-  end
-  
   # Accessly's tables are prefixed with accessly_ to
   # prevent any naming conflicts with other tables in the database.
   def self.table_name_prefix

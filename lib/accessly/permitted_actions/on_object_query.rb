@@ -51,8 +51,8 @@ module Accessly
       #   Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
 
       def list(action_id, object_type)
-        raise Accessly::ListError.new("object_type must be of ActiveRecord::Base") unless object_type.class === ActiveRecord::Base
-        raise Accessly::ListError.new("action_id must be an Integer") unless action_id.class == Integer
+        raise ArgumentError.new("object_type must be of ActiveRecord::Base") unless object_type.class === ActiveRecord::Base
+        raise ArgumentError.new("action_id must be an Integer") unless action_id.class == Integer
 
         object_type.where(id:
           Accessly::QueryBuilder.with_actors(Accessly::PermittedActionOnObject, @actors)
