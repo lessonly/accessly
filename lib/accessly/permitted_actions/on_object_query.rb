@@ -36,7 +36,7 @@ module Accessly
       # which the actor has permission to perform action_id.
       #
       # @param action_id [Integer] The action we're checking on the actor in the namespace.
-      # @param namespace [String] The ActiveRecord model to be loaded.
+      # @param namespace [String] The namespace to check actor permissions.
       # @return [ActiveRecord::Relation]
       #
       # @example
