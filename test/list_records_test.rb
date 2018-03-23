@@ -2,18 +2,6 @@ require "test_helper"
 
 describe Accessly do
 
-  it "raises a ListError if object_type is not of ActiveRecord::Base" do
-    actor1 = User.create!
-
-    proc { Accessly::Query.new(actor1).list(1, {}) }.must_raise ArgumentError
-  end
-
-  it "raises a ListError if action_id is not an Integer" do
-    actor1 = User.create!
-
-    proc { Accessly::Query.new(actor1).list([1], Post) }.must_raise ArgumentError
-  end
-
   it "returns a list of objects" do
     actor1 = User.create!
     actor2 = User.create!
@@ -59,16 +47,16 @@ describe Accessly do
 
     actor1_list = Accessly::Query.new(actor1).list(1, Post)
     (actor1_list.is_a? ActiveRecord::Relation).must_equal true
-    (actor1_list.to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id ]
+    (Post.where(id: actor1_list).to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id ]
 
     Accessly::Query.new(group1).list(1, Post).must_equal []
     group1_list = Accessly::Query.new(group1).list(2, Post)
     (group1_list.is_a? ActiveRecord::Relation).must_equal true
-    (group1_list.to_a.map { |post| post.id  }).must_equal [ post3.id ]
+    (Post.where(id: group1_list).to_a.map { |post| post.id  }).must_equal [ post3.id ]
 
     combined_list = Accessly::Query.new(User => actor1.id, Group => group2.id).list(1, Post)
     (combined_list.is_a? ActiveRecord::Relation).must_equal true
-    (combined_list.to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id, post3.id ]
+    (Post.where(id: combined_list).to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id, post3.id ]
 
   end
 
@@ -121,16 +109,16 @@ describe Accessly do
 
     actor1_list = Accessly::Query.new(actor1).on_segment(1).list(1, Post)
     (actor1_list.is_a? ActiveRecord::Relation).must_equal true
-    (actor1_list.to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id ]
+    (Post.where(id: actor1_list).to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id ]
 
     Accessly::Query.new(group1).on_segment(1).list(1, Post).must_equal []
     group1_list = Accessly::Query.new(group1).on_segment(1).list(2, Post)
     (group1_list.is_a? ActiveRecord::Relation).must_equal true
-    (group1_list.to_a.map { |post| post.id  }).must_equal [ post3.id ]
+    (Post.where(id: group1_list).to_a.map { |post| post.id  }).must_equal [ post3.id ]
 
     combined_list = Accessly::Query.new(User => actor1.id, Group => group2.id).on_segment(1).list(1, Post)
     (combined_list.is_a? ActiveRecord::Relation).must_equal true
-    (combined_list.to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id, post3.id ]
+    (Post.where(id: combined_list).to_a.map { |post| post.id  }).must_equal [ post1.id, post2.id, post3.id ]
 
   end
 end
