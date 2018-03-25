@@ -8,7 +8,7 @@ describe Accessly::Policy::Base do
 # UserPolicy.new(user).view?(other_user)
 # UserPolicy.new(user).view_list
 #
-# It will also impelement the following API. Each
+# It will also implement the following API. Each
 # method will simply call the corresponding method
 # defined above to keep overriding easy.
 # UserPolicy.new(user).can?(:view)
@@ -51,16 +51,15 @@ describe Accessly::Policy::Base do
       "OverriddenNamespace"
     end
 
-    # TODO: This will be necessary for admin stuff
-    # def is_admin?
-    #   actor.admin?
-    # end
+    def is_admin?
+      actor.admin?
+    end
 
+    # TODO: List
     # def self.admin_scope
     #   actor.company.users.select(:id)
     # end
 
-    # TODO: List
     # def list
     #   if actor.admin?
     #     actor.company.users
@@ -246,5 +245,20 @@ describe Accessly::Policy::Base do
     policy = CustomizedPolicy.new(other_user)
     policy.change_role?.must_equal false
     policy.change_role?(user).must_equal false
+  end
+
+  it "returns true automatically when is_admin? returns true" do
+    admin_user = User.create!(admin: true)
+    non_admin_user = User.create!
+
+    # Non-admin has no permissions set
+    non_admin_policy = CustomizedPolicy.new(non_admin_user)
+    non_admin_policy.view?.must_equal false
+    non_admin_policy.view?(admin_user).must_equal false
+
+    # Admin has no permissions set, but can do anything
+    admin_policy = CustomizedPolicy.new(admin_user)
+    admin_policy.view?.must_equal true
+    admin_policy.view?(non_admin_user).must_equal true
   end
 end

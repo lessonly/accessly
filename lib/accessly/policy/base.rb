@@ -30,6 +30,10 @@ module Accessly
         self.class.namespace
       end
 
+      def is_admin?
+        false
+      end
+
       def accessly_query
         @_accessly_query ||= Accessly::Query.new(actor)
       end
@@ -69,20 +73,24 @@ module Accessly
       end
 
       def _can_do_action_without_object?(action, action_id)
-        if !_actions[action].nil?
-          accessly_query.can?(action_id, namespace)
-        else
+        if _actions[action].nil?
           raise ArgumentError.new("#{action} is not defined as a general action for #{self.class.name}")
+        elsif is_admin?
+          true
+        else
+          accessly_query.can?(action_id, namespace)
         end
       end
 
       def _can_do_action_with_object?(action, action_id, object)
         object_id = object.respond_to?(:id) ? object.id : object
 
-        if !_actions_on_objects[action].nil?
-          accessly_query.can?(action_id, namespace, object_id)
-        else
+        if _actions_on_objects[action].nil?
           raise ArgumentError.new("#{action} is not defined as an action-on-object for #{self.class.name}")
+        elsif is_admin?
+          true
+        else
+          accessly_query.can?(action_id, namespace, object_id)
         end
       end
     end
