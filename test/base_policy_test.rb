@@ -102,6 +102,10 @@ describe Accessly::Policy::Base do
     end
   end
 
+  class DefaultNamespacePolicy < Accessly::Policy::Base
+    actions view: 1
+  end
+
   it "defines action lookup methods" do
     user = User.create!
     other_user = User.create!
@@ -260,5 +264,20 @@ describe Accessly::Policy::Base do
     admin_policy = CustomizedPolicy.new(admin_user)
     admin_policy.view?.must_equal true
     admin_policy.view?(non_admin_user).must_equal true
+  end
+
+  it "uses the policy class name as the default namespace" do
+    user = User.create!
+
+    permission = Accessly::PermittedAction.create!(
+      id: SecureRandom.uuid,
+      segment_id: -1,
+      actor: user,
+      action: 1,
+      object_type: String(DefaultNamespacePolicy)
+    )
+
+    policy = DefaultNamespacePolicy.new(user)
+    policy.view?.must_equal true
   end
 end
