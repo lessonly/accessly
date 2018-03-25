@@ -1,6 +1,6 @@
 module Accessly
   module Policy
-    class BaseOption1
+    class Base
 
       attr_reader :actor
 
@@ -22,12 +22,12 @@ module Accessly
         end
       end
 
-      def self.object_type
-        raise NotImplementedError.new("object_type must be implemented")
+      def self.namespace
+        String(self)
       end
 
-      def object_type
-        self.class.object_type
+      def namespace
+        self.class.namespace
       end
 
       def accessly_query
@@ -70,15 +70,17 @@ module Accessly
 
       def _can_do_action_without_object?(action, action_id)
         if !_actions[action].nil?
-          accessly_query.can?(action_id, object_type)
+          accessly_query.can?(action_id, namespace)
         else
           raise ArgumentError.new("#{action} is not defined as a general action for #{self.class.name}")
         end
       end
 
       def _can_do_action_with_object?(action, action_id, object)
+        object_id = object.respond_to?(:id) ? object.id : object
+
         if !_actions_on_objects[action].nil?
-          accessly_query.can?(action_id, object.class, object.id)
+          accessly_query.can?(action_id, namespace, object_id)
         else
           raise ArgumentError.new("#{action} is not defined as an action-on-object for #{self.class.name}")
         end

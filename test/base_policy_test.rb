@@ -1,19 +1,22 @@
 require "test_helper"
-require "accessly/policy/base_option_1"
+require "accessly/policy/base"
 
-describe Accessly::Policy::BaseOption1 do
+describe Accessly::Policy::Base do
 ############
-# BaseOption1 implements an API like this:
+# Accessly::Policy::Base implements an API like this:
 # UserPolicy.new(user).view?
 # UserPolicy.new(user).view?(other_user)
 # UserPolicy.new(user).view_list
 #
-# BaseOption2 implements a slightly different way.
-#
-# We will need to decide which one to move forward with.
+# It will also impelement the following API. Each
+# method will simply call the corresponding method
+# defined above to keep overriding easy.
+# UserPolicy.new(user).can?(:view)
+# UserPolicy.new(user).can?(:view, other_user)
+# UserPolicy.new(user).list(:view)
 ############
 
-  class UserPolicyOption1 < Accessly::Policy::BaseOption1
+  class UserPolicy < Accessly::Policy::Base
 
     actions(
       view: 1,
@@ -29,12 +32,43 @@ describe Accessly::Policy::BaseOption1 do
       email: 4
     )
 
-    def self.object_type
-      User
+    def self.namespace
+      User.name
     end
+
+    # TODO: This will be necessary for list
+    # def self.model_scope
+    #   User
+    # end
+
+    # TODO: Grant
+    # TODO: Revoke
   end
 
-  class CustomizedPolicyOption1 < UserPolicyOption1
+  class CustomizedPolicy < UserPolicy
+
+    def self.namespace
+      "OverriddenNamespace"
+    end
+
+    # TODO: This will be necessary for admin stuff
+    # def is_admin?
+    #   actor.admin?
+    # end
+
+    # def self.admin_scope
+    #   actor.company.users.select(:id)
+    # end
+
+    # TODO: List
+    # def list
+    #   if actor.admin?
+    #     actor.company.users
+    #   else
+    #     super
+    #   end
+    # end
+
     # Customize a general action check
     def destroy?
       if actor.name == "Aaron"
@@ -69,23 +103,19 @@ describe Accessly::Policy::BaseOption1 do
     end
   end
 
-  class PolicyWithoutObjectTypeOption1 < Accessly::Policy::BaseOption1
-    actions view: 1
-  end
-
   it "defines action lookup methods" do
     user = User.create!
     other_user = User.create!
 
-    UserPolicyOption1.new(user).view?
-    UserPolicyOption1.new(user).edit_basic_info?
-    UserPolicyOption1.new(user).change_role?
-    UserPolicyOption1.new(user).destroy?
+    UserPolicy.new(user).view?
+    UserPolicy.new(user).edit_basic_info?
+    UserPolicy.new(user).change_role?
+    UserPolicy.new(user).destroy?
 
-    UserPolicyOption1.new(user).view?(other_user)
-    UserPolicyOption1.new(user).edit_basic_info?(other_user)
-    UserPolicyOption1.new(user).change_role?(other_user)
-    UserPolicyOption1.new(user).email?(other_user)
+    UserPolicy.new(user).view?(other_user)
+    UserPolicy.new(user).edit_basic_info?(other_user)
+    UserPolicy.new(user).change_role?(other_user)
+    UserPolicy.new(user).email?(other_user)
   end
 
   it "limits lookup methods to contexts with and without objects appropriately" do
@@ -93,24 +123,18 @@ describe Accessly::Policy::BaseOption1 do
     other_user = User.create!
 
     assert_raises(ArgumentError) do
-      UserPolicyOption1.new(user).email?
+      UserPolicy.new(user).email?
     end
 
     assert_raises(ArgumentError) do
-      UserPolicyOption1.new(user).destroy?(other_user)
-    end
-  end
-
-  it "requires object_type to be defined" do
-    assert_raises(NotImplementedError) do
-      PolicyWithoutObjectTypeOption1.new(User.new).view?
+      UserPolicy.new(user).destroy?(other_user)
     end
   end
 
   it "looks up non-object permissions from the Accessly library" do
     user = User.create!
 
-    UserPolicyOption1.new(user).edit_basic_info?.must_equal false
+    UserPolicy.new(user).edit_basic_info?.must_equal false
 
     Accessly::PermittedAction.create!(
       id: SecureRandom.uuid,
@@ -120,12 +144,12 @@ describe Accessly::Policy::BaseOption1 do
       object_type: String(User)
     )
 
-    UserPolicyOption1.new(user).edit_basic_info?.must_equal true
+    UserPolicy.new(user).edit_basic_info?.must_equal true
   end
 
   it "caches non-object permission lookups" do
     user = User.create!
-    policy = UserPolicyOption1.new(user)
+    policy = UserPolicy.new(user)
 
     policy.edit_basic_info?.must_equal false
 
@@ -139,7 +163,7 @@ describe Accessly::Policy::BaseOption1 do
 
     policy.edit_basic_info?.must_equal false
 
-    policy = UserPolicyOption1.new(user)
+    policy = UserPolicy.new(user)
     policy.edit_basic_info?.must_equal true
     permission.destroy!
     policy.edit_basic_info?.must_equal true
@@ -149,7 +173,7 @@ describe Accessly::Policy::BaseOption1 do
     user = User.create!
     other_user = User.create!
 
-    UserPolicyOption1.new(user).email?(other_user).must_equal false
+    UserPolicy.new(user).email?(other_user).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -159,13 +183,13 @@ describe Accessly::Policy::BaseOption1 do
       object: other_user
     )
 
-    UserPolicyOption1.new(user).email?(other_user).must_equal true
+    UserPolicy.new(user).email?(other_user).must_equal true
   end
 
   it "caches object permission lookups" do
     user = User.create!
     other_user = User.create!
-    policy = UserPolicyOption1.new(user)
+    policy = UserPolicy.new(user)
 
     policy.email?(other_user).must_equal false
 
@@ -179,7 +203,7 @@ describe Accessly::Policy::BaseOption1 do
 
     policy.email?(other_user).must_equal false
 
-    policy = UserPolicyOption1.new(user)
+    policy = UserPolicy.new(user)
     policy.email?(other_user).must_equal true
     permission.destroy!
     policy.email?(other_user).must_equal true
@@ -188,12 +212,12 @@ describe Accessly::Policy::BaseOption1 do
   it "allows general action checks to be customized" do
     # User named Aaron can always destroy users
     user = User.create!(name: "Aaron")
-    policy = CustomizedPolicyOption1.new(user)
+    policy = CustomizedPolicy.new(user)
     policy.destroy?.must_equal true
 
     # User not named Aaron gets normal privileges
     user = User.create!(name: "Jim")
-    policy = CustomizedPolicyOption1.new(user)
+    policy = CustomizedPolicy.new(user)
     policy.destroy?.must_equal false
   end
 
@@ -201,7 +225,7 @@ describe Accessly::Policy::BaseOption1 do
     # Anybody can email user named Aaron
     user = User.create!
     other_user = User.create!(name: "Aaron")
-    policy = CustomizedPolicyOption1.new(user)
+    policy = CustomizedPolicy.new(user)
     policy.email?(other_user).must_equal true
 
     # Emailing other users goes through normal privilege check
@@ -212,14 +236,14 @@ describe Accessly::Policy::BaseOption1 do
     # User named Bob cannot generally change role
     user = User.create!(name: "Bob")
     other_user = User.create!(name: "Aaron")
-    policy = CustomizedPolicyOption1.new(user)
+    policy = CustomizedPolicy.new(user)
     policy.change_role?.must_equal false
 
     # User named Bob can change role for specific user named Aaron
     policy.change_role?(other_user).must_equal true
 
     # User named Aaron has normal privileges
-    policy = CustomizedPolicyOption1.new(other_user)
+    policy = CustomizedPolicy.new(other_user)
     policy.change_role?.must_equal false
     policy.change_role?(user).must_equal false
   end
