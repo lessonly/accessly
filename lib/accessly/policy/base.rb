@@ -34,6 +34,18 @@ module Accessly
         false
       end
 
+      def grant(action, object = nil)
+        object_id = _get_object_id(object)
+
+        action_id = if object_id.nil?
+          _get_general_action_id!(action)
+        else
+          _get_action_on_object_id!(action)
+        end
+
+        Accessly::Permission::Grant.new(actor).grant!(action_id, namespace, object_id)
+      end
+
       def accessly_query
         @_accessly_query ||= Accessly::Query.new(actor)
       end
@@ -109,7 +121,7 @@ module Accessly
       # @return [Boolean]
       def _can_do_action_without_object?(action, action_id)
         if _actions[action].nil?
-          raise ArgumentError.new("#{action} is not defined as a general action for #{self.class.name}")
+          _invalid_general_action!(action)
         elsif is_admin?
           true
         else
@@ -123,15 +135,35 @@ module Accessly
       #
       # @return [Boolean]
       def _can_do_action_with_object?(action, action_id, object)
-        object_id = object.respond_to?(:id) ? object.id : object
+        object_id = _get_object_id(object)
 
         if _actions_on_objects[action].nil?
-          raise ArgumentError.new("#{action} is not defined as an action-on-object for #{self.class.name}")
+          _invalid_action_on_object!(action)
         elsif is_admin?
           true
         else
           accessly_query.can?(action_id, namespace, object_id)
         end
+      end
+
+      def _get_general_action_id!(action)
+        _actions[action] || _invalid_general_action!(action)
+      end
+
+      def _get_action_on_object_id!(action)
+        _actions_on_objects[action] || _invalid_action_on_object!(action)
+      end
+
+      def _invalid_general_action!(action)
+        raise ArgumentError.new("#{action} is not defined as a general action for #{self.class.name}")
+      end
+
+      def _invalid_action_on_object!(action)
+        raise ArgumentError.new("#{action} is not defined as an action-on-object for #{self.class.name}")
+      end
+
+      def _get_object_id(object)
+        object.respond_to?(:id) ? object.id : object
       end
 
       def self._action_defined?(action_name)

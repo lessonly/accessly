@@ -16,11 +16,10 @@ describe Accessly::Policy::Base do
 # UserPolicy.new(user).list(:view)
 ############
 
-# TODO: grant
 # TODO: revoke
-# TODO: Admin checks
-# TODO: list (including model_scope)
+# TODO: view (list for action) (including model_scope)
 # TODO: can?
+# TODO: list
 
   class UserPolicy < Accessly::Policy::Base
 
@@ -166,5 +165,22 @@ describe Accessly::Policy::Base do
 
     policy = DefaultNamespacePolicy.new(user)
     policy.view?.must_equal true
+  end
+
+  it "grants the actor a general permission" do
+    user = User.create!
+    UserPolicy.new(user).view?.must_equal false
+
+    UserPolicy.new(user).grant(:view)
+    UserPolicy.new(user).view?.must_equal true
+  end
+
+  it "grants the actor permission on an object" do
+    user = User.create!
+    other_user = User.create!
+    UserPolicy.new(user).view?(other_user).must_equal false
+
+    UserPolicy.new(user).grant(:view, other_user)
+    UserPolicy.new(user).view?(other_user).must_equal true
   end
 end
