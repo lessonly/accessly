@@ -24,6 +24,7 @@ module Accessly
       # @example
       #   # Can the user perform the action with id 3 for posts?
       #   Accessly::Query.new(user).can?(3, Post)
+      # @example
       #   # Can the user perform the action with id 3 for posts on segment 1?
       #   Accessly::Query.new(user).on_segment(1).can?(3, Post)
       def can?(action_id, object_type)

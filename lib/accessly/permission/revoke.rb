@@ -29,6 +29,7 @@ module Accessly
       #   @example
       #     # Remove user access to posts for action id 3
       #     Accessly::Permission::Revoke.new(user).revoke!(3, Post)
+      #   @example
       #     # Remove user access to posts for action id 3 on a segment
       #     Accessly::Permission::Revoke.new(user).on_segment(1).revoke!(3, Post)
       #
@@ -44,6 +45,7 @@ module Accessly
       #   @example
       #     # Remove user access to Post 7 for action id 3
       #     Accessly::Permission::Revoke.new(user).revoke!(3, Post, 7)
+      #   @example
       #     # Remove user access to Post 7 for action id 3 on a segment
       #     Accessly::Permission::Revoke.new(user).on_segment(1).revoke!(3, Post, 7)
       def revoke!(action_id, object_type, object_id = nil)

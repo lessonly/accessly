@@ -30,6 +30,7 @@ module Accessly
       #   @example
       #     # Allow the user access to posts for action id 3
       #     Accessly::Permission::Grant.new(user).grant!(3, "posts")
+      #   @example
       #     # Allow the user access to posts for action id 3 on a segment
       #     Accessly::Permission::Grant.new(user).on_segment(1).grant!(3, "posts")
       #
@@ -46,6 +47,7 @@ module Accessly
       #   @example
       #     # Allow the user access to Post 7 for action id 3
       #     Accessly::Permission::Grant.new(user).grant!(3, Post, 7)
+      #   @example
       #     # Allow the user access to Post 7 for action id 3 on a segment
       #     Accessly::Permission::Grant.new(user).on_segment(1).grant!(3, Post, 7)
       def grant!(action_id, object_type, object_id = nil)
