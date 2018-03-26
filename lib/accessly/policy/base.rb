@@ -46,6 +46,18 @@ module Accessly
         Accessly::Permission::Grant.new(actor).grant!(action_id, namespace, object_id)
       end
 
+      def revoke(action, object = nil)
+        object_id = _get_object_id(object)
+
+        action_id = if object_id.nil?
+          _get_general_action_id!(action)
+        else
+          _get_action_on_object_id!(action)
+        end
+
+        Accessly::Permission::Revoke.new(actor).revoke!(action_id, namespace, object_id)
+      end
+
       def accessly_query
         @_accessly_query ||= Accessly::Query.new(actor)
       end
