@@ -33,11 +33,11 @@ module Accessly
       #     Accessly::Permission::Revoke.new(user).on_segment(1).revoke!(3, Post)
       #
       # @overload revoke!(action_id, namespace, namespace_id)
-      #   Revoke permission on an ActiveRecord object.
+      #   Revoke permission on a namespaced object.
       #
       #   @param action_id [Integer] The action to revoke
-      #   @param namespace [Class] The namespace to remove a permission.
-      #   @param namespace_id [Integer] The id of the namespaced object that removes a permission
+      #   @param namespace [ActiveRecord::Base] The ActiveRecord model to remove a permission.
+      #   @param namespace_id [Integer] The id of the ActiveRecord object that removes a permission
       #   @raise [Accessly::RevokeError] if the operation does not succeed
       #   @return [nil] Returns nil if successful
       #

@@ -38,8 +38,8 @@ module Accessly
       #   A grant is universally unique and is enforced at the database level.
       #
       #   @param action_id [Integer] The action to grant for the object
-      #   @param namespace [Class] The Class that receives a permission grant.
-      #   @param namespace_id [Integer] The id of the namespaced object which receives a permission grant
+      #   @param namespace [ActiveRecord::Base] The ActiveRecord model that receives a permission grant.
+      #   @param namespace_id [Integer] The id of the ActiveRecord object which receives a permission grant
       #   @raise [Accessly::GrantError] if the operation does not succeed
       #   @return [nil] Returns nil if successful
       #

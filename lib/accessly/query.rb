@@ -57,8 +57,8 @@ module Accessly
     #   on a given record.
     #
     #   @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
-    #   @param namespace [Class] The namespace which we're checking for permissions.
-    #   @param namespace_id [Integer] The id of the namespace object which we're checking for permission on.
+    #   @param namespace [ActiveRecord::Base] The ActiveRecord model for permission check.
+    #   @param namespace_id [Integer] The id of the ActiveRecord object for permission check.
     #   @return [Boolean] Returns true if actor has been granted the permission on the specified record, false otherwise.
     #
     #   @example
