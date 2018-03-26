@@ -25,7 +25,8 @@ ActiveRecord::Schema.define(version: 1) do
     t.column :object_id, :integer, null: false
   end
 
-  add_index(:accessly_permitted_actions, [:segment_id, :action, :actor_id, :actor_type, :object_type], unique: true, name: "accessly_pa_uniq_table_idx")
-  add_index(:accessly_permitted_action_on_objects, [:segment_id, :action, :actor_id, :actor_type, :object_type, :object_id], unique: true, name: "accessly_paoo_uniq_table_idx")
+  add_index(:accessly_permitted_action_on_objects, [:segment_id, :actor_type, :actor_id, :object_type, :object_id, :action], unique: true, name: "acessly_paoo_uniq_table_idx")
+  add_index(:accessly_permitted_action_on_objects, [:segment_id, :object_type, :object_id, :action], name: "acessly_paoo_on_object_idx")
+  add_index(:accessly_permitted_actions, [:segment_id, :actor_type, :actor_id, :object_type, :action], unique: true, name: "acessly_pa_uniq_table_idx")
 
 end

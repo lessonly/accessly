@@ -8,6 +8,6 @@ class CreatePermittedActions < ActiveRecord::Migration<%= migration_version %>
       t.column :object_type, :string, null: false
     end
 
-    add_index(:accessly_permitted_actions, [:segment_id, :action, :actor_id, :actor_type, :object_type], unique: true, name: "acessly_pa_uniq_table_idx")
+    add_index(:accessly_permitted_actions, [:segment_id, :actor_type, :actor_id, :object_type, :action], unique: true, name: "acessly_pa_uniq_table_idx")
   end
 end
