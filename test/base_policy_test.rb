@@ -44,6 +44,10 @@ describe Accessly::Policy::Base do
     def self.model_scope
       User.all
     end
+
+    def is_admin?
+      actor.admin?
+    end
   end
 
   class DefaultNamespacePolicy < Accessly::Policy::Base
@@ -171,6 +175,21 @@ describe Accessly::Policy::Base do
     policy.view?.must_equal true
   end
 
+  it "returns true automatically when is_admin? returns true" do
+    admin_user = User.create!(admin: true)
+    non_admin_user = User.create!
+
+    # Non-admin has no permissions set
+    non_admin_policy = UserPolicy.new(non_admin_user)
+    non_admin_policy.view?.must_equal false
+    non_admin_policy.view?(admin_user).must_equal false
+
+    # Admin has no permissions set, but can do anything
+    admin_policy = UserPolicy.new(admin_user)
+    admin_policy.view?.must_equal true
+    admin_policy.view?(non_admin_user).must_equal true
+  end
+
   it "lists objects the actor has the permission on" do
     user = User.create!
     permitted_users = 3.times.map { User.create! }
@@ -201,11 +220,22 @@ describe Accessly::Policy::Base do
     end
 
     user_policy = UserPolicy.new(user)
-    granted_users = user_policy.view
+    granted_users = user_policy.view.order(:id)
     granted_users.must_equal permitted_users
 
     other_user_policy = UserPolicy.new(other_user)
-    other_granted_users = other_user_policy.view
+    other_granted_users = other_user_policy.view.order(:id)
     other_granted_users.must_equal other_permitted_users
+  end
+
+  it "allows admins to list all objects in the scope" do
+    User.destroy_all
+
+    admin = User.create!(admin: true)
+    all_users = [admin, *3.times.map { User.create! }]
+
+    policy = UserPolicy.new(admin)
+    granted_users = policy.view.order(:id)
+    granted_users.must_equal all_users
   end
 end

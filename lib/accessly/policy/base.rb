@@ -86,19 +86,24 @@ module Accessly
       end
 
       # Parses an action name from a given method name of the format
-      # `action_name?` and returns the action method name. If the
-      # method name does not follow that format, this assumes the
-      # caller is not calling an action method and returns nil.
+      # `action_name?` or `action_name and returns the action method
+      # or the list method name. If the method name does not follow
+      # one of those formats, this assumes the caller is not calling
+      # an action or list method and returns nil.
       def _resolve_action_method_name(method_name)
-        action_method_match = /\A(\w+)\?\z/.match(method_name)
+        action_method_match = /\A(\w+)(\??)\z/.match(method_name)
 
         return nil if action_method_match.nil? || action_method_match[1].nil?
 
         action_name = action_method_match[1].to_sym
-        if _action_defined?(action_name)
+        is_predicate = action_method_match[2] == "?"
+
+        if !_action_defined?(action_name)
+          nil
+        elsif is_predicate
           _action_method_name(action_name)
         else
-          nil
+          _action_list_method_name(action_name)
         end
       end
 
@@ -186,7 +191,13 @@ module Accessly
       end
 
       def _list_for_action(action, action_id)
-        model_scope.where(id: accessly_query.list(action_id, namespace))
+        if _actions_on_objects[action].nil?
+          _invalid_action_on_object!(action)
+        elsif is_admin?
+          model_scope
+        else
+          model_scope.where(id: accessly_query.list(action_id, namespace))
+        end
       end
 
       def _get_general_action_id!(action)

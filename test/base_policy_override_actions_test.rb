@@ -23,10 +23,6 @@ describe Accessly::Policy::Base do
       User.name
     end
 
-    def is_admin?
-      actor.admin?
-    end
-
     # Customize a general action check
     def destroy?
       if actor.name == "Aaron"
@@ -98,20 +94,5 @@ describe Accessly::Policy::Base do
     policy = OverrideActionsUserPolicy.new(other_user)
     policy.change_role?.must_equal false
     policy.change_role?(user).must_equal false
-  end
-
-  it "returns true automatically when is_admin? returns true" do
-    admin_user = User.create!(admin: true)
-    non_admin_user = User.create!
-
-    # Non-admin has no permissions set
-    non_admin_policy = OverrideActionsUserPolicy.new(non_admin_user)
-    non_admin_policy.view?.must_equal false
-    non_admin_policy.view?(admin_user).must_equal false
-
-    # Admin has no permissions set, but can do anything
-    admin_policy = OverrideActionsUserPolicy.new(admin_user)
-    admin_policy.view?.must_equal true
-    admin_policy.view?(non_admin_user).must_equal true
   end
 end
