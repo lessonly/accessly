@@ -40,6 +40,10 @@ describe Accessly::Policy::Base do
     def self.namespace
       User.name
     end
+
+    def self.model_scope
+      User.all
+    end
   end
 
   class DefaultNamespacePolicy < Accessly::Policy::Base
@@ -165,5 +169,43 @@ describe Accessly::Policy::Base do
 
     policy = DefaultNamespacePolicy.new(user)
     policy.view?.must_equal true
+  end
+
+  it "lists objects the actor has the permission on" do
+    user = User.create!
+    permitted_users = 3.times.map { User.create! }
+
+    other_user = User.create!
+    other_permitted_users = 3.times.map { User.create! }
+
+    permitted_users.each do |permitted_user|
+      Accessly::PermittedActionOnObject.create!(
+        id: SecureRandom.uuid,
+        segment_id: -1,
+        actor: user,
+        action: 1,
+        object_type: String(permitted_user.class),
+        object_id: permitted_user.id
+      )
+    end
+
+    other_permitted_users.each do |permitted_user|
+      Accessly::PermittedActionOnObject.create!(
+        id: SecureRandom.uuid,
+        segment_id: -1,
+        actor: other_user,
+        action: 1,
+        object_type: String(permitted_user.class),
+        object_id: permitted_user.id
+      )
+    end
+
+    user_policy = UserPolicy.new(user)
+    granted_users = user_policy.view
+    granted_users.must_equal permitted_users
+
+    other_user_policy = UserPolicy.new(other_user)
+    other_granted_users = other_user_policy.view
+    other_granted_users.must_equal other_permitted_users
   end
 end

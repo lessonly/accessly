@@ -11,14 +11,14 @@ module Accessly
       def self.actions(actions)
         _actions.merge!(actions)
         actions.each do |action, action_id|
-          _define_action_method(action, action_id)
+          _define_action_methods(action, action_id)
         end
       end
 
       def self.actions_on_objects(actions_on_objects)
         _actions_on_objects.merge!(actions_on_objects)
         actions_on_objects.each do |action, action_id|
-          _define_action_method(action, action_id)
+          _define_action_methods(action, action_id)
         end
       end
 
@@ -28,6 +28,15 @@ module Accessly
 
       def namespace
         self.class.namespace
+      end
+
+      def self.model_scope
+        puts caller
+        raise ArgumentError.new("#model_scope is not defined on #{self.name}.")
+      end
+
+      def model_scope
+        self.class.model_scope
       end
 
       def is_admin?
@@ -105,12 +114,30 @@ module Accessly
         self.class._action_method_name(action_name)
       end
 
+      # The implementation for list methods follow the naming format
+      # `_list_action_name`. This is to allow child Policies to override
+      # the list method and still be able to call `super` when they
+      # need to call the base implementation of the lsit method.
+      def self._action_list_method_name(action_name)
+        "_list_#{action_name}"
+      end
+
+      def _action_list_method_name(action_name)
+        self.class._action_list_method_name(action_name)
+      end
+
       # Defines the action method on the Policy class for the given
       # action name.
-      def self._define_action_method(action, action_id)
+      def self._define_action_methods(action, action_id)
         unless method_defined?(_action_method_name(action))
           define_method(_action_method_name(action)) do |*args|
             _can_do_action?(action, action_id, args.first)
+          end
+        end
+
+        unless method_defined?(_action_list_method_name(action))
+          define_method(_action_list_method_name(action)) do |*args|
+            _list_for_action(action, action_id)
           end
         end
       end
@@ -156,6 +183,10 @@ module Accessly
         else
           accessly_query.can?(action_id, namespace, object_id)
         end
+      end
+
+      def _list_for_action(action, action_id)
+        model_scope.where(id: accessly_query.list(action_id, namespace))
       end
 
       def _get_general_action_id!(action)
