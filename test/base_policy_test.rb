@@ -16,6 +16,12 @@ describe Accessly::Policy::Base do
 # UserPolicy.new(user).list(:view)
 ############
 
+# TODO: grant
+# TODO: revoke
+# TODO: Admin checks
+# TODO: list (including model_scope)
+# TODO: can?
+
   class UserPolicy < Accessly::Policy::Base
 
     actions(
@@ -35,14 +41,6 @@ describe Accessly::Policy::Base do
     def self.namespace
       User.name
     end
-
-    # TODO: This will be necessary for list
-    # def self.model_scope
-    #   User
-    # end
-
-    # TODO: Grant
-    # TODO: Revoke
   end
 
   class DefaultNamespacePolicy < Accessly::Policy::Base

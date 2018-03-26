@@ -2,19 +2,6 @@ require "test_helper"
 require "accessly/policy/base"
 
 describe Accessly::Policy::Base do
-############
-# Accessly::Policy::Base implements an API like this:
-# UserPolicy.new(user).view?
-# UserPolicy.new(user).view?(other_user)
-# UserPolicy.new(user).view_list
-#
-# It will also implement the following API. Each
-# method will simply call the corresponding method
-# defined above to keep overriding easy.
-# UserPolicy.new(user).can?(:view)
-# UserPolicy.new(user).can?(:view, other_user)
-# UserPolicy.new(user).list(:view)
-############
 
   class OverrideActionsUserPolicy < Accessly::Policy::Base
 
@@ -45,8 +32,6 @@ describe Accessly::Policy::Base do
       if actor.name == "Aaron"
         true
       else
-        # TODO: It appears `super` doesn't work because `destroy?` isn't defined in super - rather it's meta-defined in this class. D'oh!
-        #       This means we'll need to figure out some different magic. Not sure yet whether we'll need to create a DSL or something else.
         super
       end
     end
