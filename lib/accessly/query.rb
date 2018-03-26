@@ -78,7 +78,24 @@ module Accessly
       end
     end
 
-    def list(action_id, object_type)
+    # Returns an ActiveRecord::Relation of ids in the namespace for
+    # which the actor has permission to perform action_id.
+    #
+    # @param action_id [Integer] The action we're checking on the actor in the namespace.
+    # @param namespace [String] The namespace to check actor permissions.
+    # @return [ActiveRecord::Relation]
+    #
+    # @example
+    #   # Give me the list of Post ids on which the user has permission to perform action_id 3
+    #   Accessly::Query.new(user).list(3, Post)
+    #   # Give me the list of Post ids on which the user has permission to perform action_id 3 on segment 1
+    #   Accessly::Query.new(user).on_segment(1).list(3, Post)
+    #   # Give me the list of Post ids on which the user and its groups has permission to perform action_id 3
+    #   Accessly::Query.new(User => user.id, Group => [1,2]).list(3, Post)
+    #   # Give me the list of Post ids on which the user and its groups has permission to perform action_id 3 on segment 1
+    #   Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
+    def list(action_id, namespace)
+      permitted_action_on_object_query.list(action_id, namespace)
     end
 
     private
