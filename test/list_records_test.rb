@@ -15,32 +15,32 @@ describe Accessly do
       id: SecureRandom.uuid,
       actor: actor1,
       action: 1,
-      object_type: Post,
-      object_id: post1.id
+      namespace: Post,
+      namespace_id: post1.id
     )
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
       actor: actor1,
       action: 1,
-      object_type: Post,
-      object_id: post2.id
+      namespace: Post,
+      namespace_id: post2.id
     )
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
       actor: group1,
       action: 2,
-      object_type: Post,
-      object_id: post3.id
+      namespace: Post,
+      namespace_id: post3.id
     )
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
       actor: group2,
       action: 1,
-      object_type: Post,
-      object_id: post3.id
+      namespace: Post,
+      namespace_id: post3.id
     )
 
     Accessly::Query.new(actor2).list(1, Post).must_equal []
@@ -74,8 +74,8 @@ describe Accessly do
       segment_id: 1,
       actor: actor1,
       action: 1,
-      object_type: Post,
-      object_id: post1.id
+      namespace: Post,
+      namespace_id: post1.id
     )
 
     Accessly::PermittedActionOnObject.create!(
@@ -83,8 +83,8 @@ describe Accessly do
       segment_id: 1,
       actor: actor1,
       action: 1,
-      object_type: Post,
-      object_id: post2.id
+      namespace: Post,
+      namespace_id: post2.id
     )
 
     Accessly::PermittedActionOnObject.create!(
@@ -92,8 +92,8 @@ describe Accessly do
       segment_id: 1,
       actor: group1,
       action: 2,
-      object_type: Post,
-      object_id: post3.id
+      namespace: Post,
+      namespace_id: post3.id
     )
 
     Accessly::PermittedActionOnObject.create!(
@@ -101,8 +101,8 @@ describe Accessly do
       segment_id: 1,
       actor: group2,
       action: 1,
-      object_type: Post,
-      object_id: post3.id
+      namespace: Post,
+      namespace_id: post3.id
     )
 
     Accessly::Query.new(actor2).on_segment(1).list(1, Post).must_equal []

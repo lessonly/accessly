@@ -16,8 +16,8 @@ describe Accessly do
       id: SecureRandom.uuid,
       actor: actor,
       action: 1,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::Query.new(actor).can?(1, Post, post.id).must_equal true
@@ -32,8 +32,8 @@ describe Accessly do
       id: SecureRandom.uuid,
       actor: actor,
       action: 1,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::PermittedActionOnObject.create!(
@@ -41,8 +41,8 @@ describe Accessly do
       segment_id: 1,
       actor: group,
       action: 2,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::Query.new(actor).can?([2,1], Post, post.id).must_equal true
@@ -74,24 +74,24 @@ describe Accessly do
       id: SecureRandom.uuid,
       actor: actor1,
       action: 1,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
       actor: actor3,
       action: 1,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
       actor: group1,
       action: 2,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::PermittedActionOnObject.create!(
@@ -99,8 +99,8 @@ describe Accessly do
       segment_id: 1,
       actor: group1,
       action: 5,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     Accessly::Query.new(User => actor1.id).can?([2,1], Post, post.id).must_equal true

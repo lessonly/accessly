@@ -52,13 +52,13 @@ module Accessly
     #     # Can the sets of actors on segment 1 perform the action with id 5 for Posts
     #     Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post)
     #
-    # @overload can?(action_id, object_type, object_id)
+    # @overload can?(action_id, namespace, namespace_id)
     #   Ask whether the actor has permission to perform action_id
     #   on a given record.
     #
     #   @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
-    #   @param object_type [ActiveRecord::Base] The ActiveRecord model which we're checking for permission on.
-    #   @param object_id [Integer] The id of the ActiveRecord object which we're checking for permission on.
+    #   @param namespace [Class] The namespace which we're checking for permissions.
+    #   @param namespace_id [Integer] The id of the namespace object which we're checking for permission on.
     #   @return [Boolean] Returns true if actor has been granted the permission on the specified record, false otherwise.
     #
     #   @example
@@ -70,11 +70,11 @@ module Accessly
     #     Accessly::Query.new(user).on_segment(1).can?(5, Post, 7)
     #     # Can the sets of actors on segment 1 perform the action with id 5 for the Post with id 7?
     #     Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).can?(5, Post, 7)
-    def can?(action_id, object_type, object_id = nil)
-      if object_id.nil?
-        permitted_action_query.can?(action_id, object_type)
+    def can?(action_id, namespace, namespace_id = nil)
+      if namespace_id.nil?
+        permitted_action_query.can?(action_id, namespace)
       else
-        permitted_action_on_object_query.can?(action_id, object_type, object_id)
+        permitted_action_on_object_query.can?(action_id, namespace, namespace_id)
       end
     end
 

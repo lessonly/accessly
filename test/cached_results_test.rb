@@ -10,7 +10,7 @@ describe Accessly do
       id: SecureRandom.uuid,
       actor: actor,
       action: 1,
-      object_type: Post
+      namespace: Post
     )
 
     query.can?(1, Post).must_equal false
@@ -25,8 +25,8 @@ describe Accessly do
       id: SecureRandom.uuid,
       actor: actor,
       action: 9,
-      object_type: Post,
-      object_id: post.id
+      namespace: Post,
+      namespace_id: post.id
     )
 
     query = Accessly::Query.new(actor)
