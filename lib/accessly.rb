@@ -1,5 +1,9 @@
 require "accessly/version"
 require "accessly/query"
+require "accessly/permission/grant"
+require "accessly/permission/revoke"
+require "accessly/models/permitted_action"
+require "accessly/models/permitted_action_on_object"
 
 module Accessly
 
