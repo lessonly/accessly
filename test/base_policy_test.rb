@@ -27,7 +27,7 @@ describe Accessly::Policy::Base do
       User.all
     end
 
-    def is_admin?
+    def unrestricted?
       actor.admin?
     end
   end
@@ -157,7 +157,7 @@ describe Accessly::Policy::Base do
     policy.view?.must_equal true
   end
 
-  it "returns true automatically when is_admin? returns true" do
+  it "returns true automatically when unrestricted? returns true" do
     admin_user = User.create!(admin: true)
     non_admin_user = User.create!
 
@@ -210,7 +210,7 @@ describe Accessly::Policy::Base do
     other_granted_users.must_equal other_permitted_users
   end
 
-  it "allows admins to list all objects in the scope" do
+  it "allows unrestricted actors to list all objects in the scope" do
     User.destroy_all
 
     admin = User.create!(admin: true)

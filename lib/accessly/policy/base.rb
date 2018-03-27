@@ -38,7 +38,7 @@ module Accessly
         self.class.model_scope
       end
 
-      def is_admin?
+      def unrestricted?
         false
       end
 
@@ -180,14 +180,14 @@ module Accessly
       end
 
       # Determines whether the actor has permission to do the action
-      # outside of an object context. If the actor is an admin, then
-      # this returns true without checking.
+      # outside of an object context. If the actor should have unrestricted
+      # access, then this returns true without checking.
       #
       # @return [Boolean]
       def _can_do_action_without_object?(action, action_id)
         if _actions[action].nil?
           _invalid_general_action!(action)
-        elsif is_admin?
+        elsif unrestricted?
           true
         else
           accessly_query.can?(action_id, namespace)
@@ -195,8 +195,8 @@ module Accessly
       end
 
       # Determines whether the actor has permission to do the action
-      # on an object. If the actor is an admin, then this returns
-      # true without checking.
+      # on an object. If the actor should have unrestricted access,
+      # then this returns true without checking.
       #
       # @return [Boolean]
       def _can_do_action_with_object?(action, action_id, object)
@@ -204,7 +204,7 @@ module Accessly
 
         if _actions_on_objects[action].nil?
           _invalid_action_on_object!(action)
-        elsif is_admin?
+        elsif unrestricted?
           true
         else
           accessly_query.can?(action_id, namespace, object_id)
@@ -214,7 +214,7 @@ module Accessly
       def _list_for_action(action, action_id)
         if _actions_on_objects[action].nil?
           _invalid_action_on_object!(action)
-        elsif is_admin?
+        elsif unrestricted?
           model_scope
         else
           model_scope.where(id: accessly_query.list(action_id, namespace))
