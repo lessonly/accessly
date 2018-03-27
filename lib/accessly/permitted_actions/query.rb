@@ -18,7 +18,7 @@ module Accessly
       # Lookups are cached in the object to prevent redundant database calls.
       #
       # @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
-      # @param object_type [String] The namespace of the given action_id.
+      # @param namespace [String] The namespace of the given action_id.
       # @return [Boolean] Returns true if actor has been granted the permission, false otherwise.
       #
       # @example
@@ -26,13 +26,13 @@ module Accessly
       #   Accessly::Query.new(user).can?(3, Post)
       #   # Can the user perform the action with id 3 for posts on segment 1?
       #   Accessly::Query.new(user).on_segment(1).can?(3, Post)
-      def can?(action_id, object_type)
-        find_or_set_value(action_id, object_type) do
+      def can?(action_id, namespace)
+        find_or_set_value(action_id, namespace) do
           Accessly::QueryBuilder.with_actors(Accessly::PermittedAction, @actors)
             .where(
               segment_id: @segment_id,
               action: action_id,
-              object_type: String(object_type),
+              namespace: String(namespace),
             ).exists?
         end
       end

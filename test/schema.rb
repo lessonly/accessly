@@ -13,7 +13,7 @@ ActiveRecord::Schema.define(version: 1) do
     t.column :action, :integer, null: false
     t.column :actor_id, :integer, null: false
     t.column :actor_type, :string, null: false
-    t.column :object_type, :string, null: false
+    t.column :namespace, :string, null: false
   end
 
   create_table :accessly_permitted_action_on_objects, force: true, id: :uuid do |t|
@@ -21,12 +21,12 @@ ActiveRecord::Schema.define(version: 1) do
     t.column :action, :integer, null: false
     t.column :actor_id, :integer, null: false
     t.column :actor_type, :string, null: false
-    t.column :object_type, :string, null: false
-    t.column :object_id, :integer, null: false
+    t.column :namespace, :string, null: false
+    t.column :namespace_id, :integer, null: false
   end
 
-  add_index(:accessly_permitted_action_on_objects, [:segment_id, :actor_type, :actor_id, :object_type, :object_id, :action], unique: true, name: "acessly_paoo_uniq_table_idx")
-  add_index(:accessly_permitted_action_on_objects, [:segment_id, :object_type, :object_id, :action], name: "acessly_paoo_on_object_idx")
-  add_index(:accessly_permitted_actions, [:segment_id, :actor_type, :actor_id, :object_type, :action], unique: true, name: "acessly_pa_uniq_table_idx")
+  add_index(:accessly_permitted_action_on_objects, [:segment_id, :actor_type, :actor_id, :namespace, :namespace_id, :action], unique: true, name: "acessly_paoo_uniq_table_idx")
+  add_index(:accessly_permitted_action_on_objects, [:segment_id, :namespace, :namespace_id, :action], name: "acessly_paoo_namespace_idx")
+  add_index(:accessly_permitted_actions, [:segment_id, :actor_type, :actor_id, :namespace, :action], unique: true, name: "acessly_pa_uniq_table_idx")
 
 end

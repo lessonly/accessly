@@ -11,8 +11,8 @@ module Accessly
       # Lookups are cached in the object to prevent redundant database calls.
       #
       # @param action_id [Integer, Array<Integer>] The action or actions we're checking whether the actor has. If this is an array, then the check is ORed.
-      # @param object_type [ActiveRecord::Base] The ActiveRecord model which we're checking for permission on.
-      # @param object_id [Integer] The id of the ActiveRecord object which we're checking for permission on.
+      # @param namespace [ActiveRecord::Base] The ActiveRecord model for permission check.
+      # @param namespace_id [Integer] The id of the ActiveRecord object for permission check.
       # @return [Boolean] Returns true if actor has been granted the permission on the specified record, false otherwise.
       #
       # @example
@@ -20,14 +20,14 @@ module Accessly
       #   Accessly::Query.new(user).can?(5, Post, 7)
       #   # Can the user perform the action with id 5 for the Post with id 7 on segment 1?
       #   Accessly::Query.new(user).on_segment(1).can?(5, Post, 7)
-      def can?(action_id, object_type, object_id)
-        find_or_set_value(action_id, object_type, object_id) do
+      def can?(action_id, namespace, namespace_id)
+        find_or_set_value(action_id, namespace, namespace_id) do
           Accessly::QueryBuilder.with_actors(Accessly::PermittedActionOnObject, @actors)
             .where(
               segment_id: @segment_id,
               action: action_id,
-              object_type: String(object_type),
-              object_id: object_id
+              namespace: String(namespace),
+              namespace_id: namespace_id
             ).exists?
         end
       end
@@ -54,8 +54,8 @@ module Accessly
           .where(
             segment_id: @segment_id,
             action: Integer(action_id),
-            object_type: String(namespace),
-          ).select(:object_id)
+            namespace: String(namespace),
+          ).select(:namespace_id)
       end
     end
   end
