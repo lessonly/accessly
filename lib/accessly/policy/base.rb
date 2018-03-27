@@ -31,7 +31,6 @@ module Accessly
       end
 
       def self.model_scope
-        puts caller
         raise ArgumentError.new("#model_scope is not defined on #{self.name}.")
       end
 
