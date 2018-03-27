@@ -43,6 +43,10 @@ module Accessly
         false
       end
 
+      def segment_id
+        nil
+      end
+
       def grant(action, object = nil)
         object_id = _get_object_id(object)
 
@@ -52,7 +56,7 @@ module Accessly
           _get_action_on_object_id!(action)
         end
 
-        Accessly::Permission::Grant.new(actor).grant!(action_id, namespace, object_id)
+        grant_object.grant!(action_id, namespace, object_id)
       end
 
       def revoke(action, object = nil)
@@ -64,11 +68,29 @@ module Accessly
           _get_action_on_object_id!(action)
         end
 
-        Accessly::Permission::Revoke.new(actor).revoke!(action_id, namespace, object_id)
+        revoke_object.revoke!(action_id, namespace, object_id)
       end
 
       def accessly_query
-        @_accessly_query ||= Accessly::Query.new(actor)
+        @_accessly_query ||= begin
+          query = Accessly::Query.new(actor)
+          query.on_segment(segment_id) unless segment_id.nil?
+          query
+        end
+      end
+
+      def grant_object
+        grant_object = Accessly::Permission::Grant.new(actor)
+        grant_object.on_segment(segment_id) unless segment_id.nil?
+
+        grant_object
+      end
+
+      def revoke_object
+        revoke_object = Accessly::Permission::Revoke.new(actor)
+        revoke_object.on_segment(segment_id) unless segment_id.nil?
+
+        revoke_object
       end
 
       private
