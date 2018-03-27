@@ -23,6 +23,10 @@ describe Accessly::Policy::Base do
       User.name
     end
 
+    def self.model_scope
+      User.all
+    end
+
     # Customize a general action check
     def destroy?
       if actor.name == "Aaron"
@@ -51,6 +55,14 @@ describe Accessly::Policy::Base do
     def email?(object)
       if object.name == "Aaron"
         true
+      else
+        super
+      end
+    end
+
+    def view
+      if actor.name == "Aaron"
+        User.all
       else
         super
       end
@@ -94,5 +106,18 @@ describe Accessly::Policy::Base do
     policy = OverrideActionsUserPolicy.new(other_user)
     policy.change_role?.must_equal false
     policy.change_role?(user).must_equal false
+  end
+
+  it "allows action lists to be overridden" do
+    User.destroy_all
+
+    # User named Aaron can view all users
+    user = User.create!(name: "Aaron")
+
+    # Other users cannot view any users
+    other_user = User.create!(name: "Bob")
+
+    OverrideActionsUserPolicy.new(user).view.order(:id).must_equal [user, other_user]
+    OverrideActionsUserPolicy.new(other_user).view.order(:id).must_equal []
   end
 end
