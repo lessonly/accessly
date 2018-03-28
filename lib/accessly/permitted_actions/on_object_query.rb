@@ -48,7 +48,6 @@ module Accessly
       #   Accessly::Query.new(User => user.id, Group => [1,2]).list(3, Post)
       #   # Give me the list of Post ids on which the user and its groups has permission to perform action_id 3 on segment 1
       #   Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
-
       def list(action_id, namespace)
         Accessly::QueryBuilder.with_actors(Accessly::PermittedActionOnObject, @actors)
           .where(
