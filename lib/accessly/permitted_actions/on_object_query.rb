@@ -18,6 +18,7 @@ module Accessly
       # @example
       #   # Can the user perform the action with id 5 for the Post with id 7?
       #   Accessly::Query.new(user).can?(5, Post, 7)
+      # @example
       #   # Can the user perform the action with id 5 for the Post with id 7 on segment 1?
       #   Accessly::Query.new(user).on_segment(1).can?(5, Post, 7)
       def can?(action_id, object_type, object_id)
@@ -42,10 +43,13 @@ module Accessly
       # @example
       #   # Give me the list of Post ids on which the user has permission to perform action_id 3
       #   Accessly::Query.new(user).list(3, Post)
+      # @example
       #   # Give me the list of Post ids on which the user has permission to perform action_id 3 on segment 1
       #   Accessly::Query.new(user).on_segment(1).list(3, Post)
+      # @example
       #   # Give me the list of Post ids on which the user and its groups has permission to perform action_id 3
       #   Accessly::Query.new(User => user.id, Group => [1,2]).list(3, Post)
+      # @example
       #   # Give me the list of Post ids on which the user and its groups has permission to perform action_id 3 on segment 1
       #   Accessly::Query.new(User => user.id, Group => [1,2]).on_segment(1).list(3, Post)
       def list(action_id, namespace)
