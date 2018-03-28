@@ -1,3 +1,5 @@
+<img width="268" src="https://raw.githubusercontent.com/lessonly/accessly/master/logo/logo.png" alt="Accessly Logo">
+
 # Accessly
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/accessly`. To experiment with that code, run `bin/console` for an interactive prompt.
