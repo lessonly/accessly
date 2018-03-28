@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["devops@lessonly.com"]
 
   spec.summary       = %q{Simplified access control in Rails}
-  spec.description   = %q{Simplified access control in Rails!}
+  spec.description   = %q{Use the policy pattern to define access control mechanisms in Rails. Store user-level, group-level, or org-level permission on any given record or concept in the database with ultra-fast lookups.}
   spec.homepage      = "https://github.com/lessonly/accessly"
   spec.license       = "MIT"
 
