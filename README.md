@@ -70,7 +70,7 @@ With this policy we can `grant` permissions to a user
 ApplicationFeaturePolicy.new(user).grant!(:view_super_secret_page)
 ```
 
-In our `Super Secret Page` controller, we could check permissions using the `.symbol?` syntax
+In our `SuperSecretPageController`, we can check whether the user has permission to view that page with
 
 ```ruby
 ApplicationFeaturePolicy.new(user).view_super_secret_page?
@@ -115,7 +115,7 @@ We differentiate permissions by a `namespace` which by default is the name of yo
 It may be necessary to override the default behavior represented in the above example.
 
 Accessly can return a relation of ids on an object for a given actor's permission grants.  `Accessly::Policy::Base` requires
-that you define `self.model_scope` so the `list` api can return an `ActiveRecord::Relation`
+that you implement `self.model_scope` with an `ActiveRecord` scope so the `list` api can return an `ActiveRecord::Relation`
 
 With this policy we can `grant` permissions for a user to do an action on another user object.
 
@@ -151,7 +151,61 @@ At any point in time we can revoke permissions with
 UserPolicy.new(user).revoke(:edit_basic_info, other_user)
 ```
 
+### Intermediate Action Policy
 
+Let's look at a policy with a combined configuration and more customization
+
+```ruby
+class UserPolicy < Accessly::Policy::Base
+
+  actions(
+    view: 1,
+    edit_basic_info: 2,
+    change_role: 3,
+    email: 4
+  )
+
+  actions_on_objects(
+    view: 1,
+    edit_basic_info: 2,
+    change_role: 3,
+    email: 4
+  )
+
+  def self.namespace
+    User.name
+  end
+
+  def self.model_scope
+    User.all
+  end
+
+  def segment_id
+    actor.organization_id
+  end
+
+  def unrestricted?
+    actor.admin?
+  end
+end
+```
+
+This policy combines `actions` and `actions_on_objects`, introduces Accessly's support for `segment_id`, and overrides `unrestricted?`
+
+#### combined actions and actions_on_objects
+
+Accessly policies can extend support for combined use of `actions` and `actions_on_objects.`  You may want to broadly grant `edit_basic_info` permissions to some users.  The same policy can support a limited scope of permissions where the `actor` and `object` must be defined.
+
+#### segment_id
+
+`segment_id` allows you to scope permission grants to a specific object id that you define.  
+In our example the `actor` belongs to an Organization model, and we set the organization_id on each permission granted for any actor using the policy.
+
+It provides additional efficiency on query execution, and we can broadly remove permissions if the organization is no longer in the application.
+
+#### unrestricted?
+
+Accessly uses `unrestricted?` to bypass permission checks.  This policy shows that the actor has an `admin` designation which we do not want to model in permissions.  The business logic implemented here would bypass any permission check if `unrestricted?` returns `true`
 
 ## Development
 
