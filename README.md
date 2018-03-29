@@ -48,9 +48,9 @@ Add the ActiveRecord Migrations:
 You can use the Accessly gem directly to grant | revoke | check permissions.  We recommend the use of 'Policies' which will be covered in this README.
 Checkout our [API docs](http://www.rubydoc.info/gems/accessly) for more info on using the API directly
 
-### Basic Policies
+We use Accessly with policies in mind to capture everything we want to know about a specific permission set. Let's take a look at some examples:
 
-We use Accessly with policies in mind to capture everything we want to know about a specific permission set.  Let's take a look at a basic example:
+### Basic Action Policy
 
 ```ruby
 class ApplicationFeaturePolicy < Accessly::Policy::Base
@@ -58,8 +58,7 @@ class ApplicationFeaturePolicy < Accessly::Policy::Base
   actions(
     view_dashboard: 1,
     view_super_secret_page: 2,
-    edit_dashboard: 3,
-    edit_super_secret_page: 4
+    view_double_secret_probation_page: 3
   )
 
 end
@@ -88,6 +87,69 @@ At any point in time we can revoke permissions with
 ApplicationFeaturePolicy.new(user).revoke(:view_super_secret_page)
 ```
 
+### Basic Action on Object Policy
+
+We can grant permissions to `actors` on other `objects` in our application with a policy like:
+
+```ruby
+class UserPolicy < Accessly::Policy::Base
+
+  actions_on_objects(
+    view: 1,
+    edit_basic_info: 2,
+    change_role: 3,
+    email: 4
+  )
+
+  def self.namespace
+    User.name
+  end
+
+  def self.model_scope
+    User.all
+  end
+end
+```
+
+We differentiate permissions by a `namespace` which by default is the name of your policy class.  However,
+It may be necessary to override the default behavior represented in the above example.
+
+Accessly can return a relation of ids on an object for a given actor's permission grants.  `Accessly::Policy::Base` requires
+that you define `self.model_scope` so the `list` api can return an `ActiveRecord::Relation`
+
+With this policy we can `grant` permissions for a user to do an action on another user object.
+
+```ruby
+UserPolicy.new(user).grant!(:edit_basic_info, other_user)
+```
+
+In our `Edit User` controller, we can check permissions
+
+```ruby
+UserPolicy.new(user).edit_basic_info?(other_user)
+```
+or by using
+
+```ruby
+UserPolicy.new(user).can?(:edit_basic_info, other_user)
+```
+
+We can list all of the users available to edit with
+
+```ruby
+UserPolicy.new(user).edit_basic_info
+```
+or by using
+
+```ruby
+UserPolicy.new(user).list(:edit_basic_info)
+```
+
+At any point in time we can revoke permissions with
+
+```ruby
+UserPolicy.new(user).revoke(:edit_basic_info, other_user)
+```
 
 
 
