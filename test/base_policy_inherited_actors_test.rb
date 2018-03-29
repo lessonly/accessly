@@ -26,6 +26,7 @@ describe Accessly::Policy::Base do
     user = User.create!(group: group)
 
     UserInGroupsPolicy.new(user).view?.must_equal false
+    UserInGroupsPolicy.new(user).can?(:view).must_equal false
 
     Accessly::PermittedAction.create!(
       id: SecureRandom.uuid,
@@ -36,6 +37,7 @@ describe Accessly::Policy::Base do
     )
 
     UserInGroupsPolicy.new(user).view?.must_equal true
+    UserInGroupsPolicy.new(user).can?(:view).must_equal true
   end
 
   it "uses the actors defined in the class for object permission lookups" do
@@ -44,6 +46,7 @@ describe Accessly::Policy::Base do
     other_user = User.create!
 
     UserInGroupsPolicy.new(user).view?(other_user).must_equal false
+    UserInGroupsPolicy.new(user).can?(:view, other_user).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -55,6 +58,7 @@ describe Accessly::Policy::Base do
     )
 
     UserInGroupsPolicy.new(user).view?(other_user).must_equal true
+    UserInGroupsPolicy.new(user).can?(:view, other_user).must_equal true
   end
 
   it "uses the actors defined in the class for list lookups" do
@@ -63,6 +67,7 @@ describe Accessly::Policy::Base do
     other_user = User.create!
 
     UserInGroupsPolicy.new(user).view?(other_user).must_equal false
+    UserInGroupsPolicy.new(user).can?(:view, other_user).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -74,6 +79,8 @@ describe Accessly::Policy::Base do
     )
 
     UserInGroupsPolicy.new(user).view.must_equal [other_user]
+    UserInGroupsPolicy.new(user).list(:view).must_equal [other_user]
+
   end
 
   it "does not grant the additional actors permissions with #grant" do

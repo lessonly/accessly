@@ -1,6 +1,5 @@
 require "test_helper"
 require "accessly/policy/base"
-
 describe Accessly::Policy::Base do
 
   class OverrideActionsUserPolicy < Accessly::Policy::Base
@@ -118,6 +117,8 @@ describe Accessly::Policy::Base do
     other_user = User.create!(name: "Bob")
 
     OverrideActionsUserPolicy.new(user).view.order(:id).must_equal [user, other_user]
+    OverrideActionsUserPolicy.new(user).list(:view).order(:id).must_equal [user, other_user]
     OverrideActionsUserPolicy.new(other_user).view.order(:id).must_equal []
+    OverrideActionsUserPolicy.new(other_user).list(:view).order(:id).must_equal []
   end
 end
