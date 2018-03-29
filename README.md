@@ -45,10 +45,10 @@ Add the ActiveRecord Migrations:
 
 ## Usage
 
-You can use the Accessly gem directly to grant | revoke | check permissions.  We recommend the use of 'Policies' which will be covered in this README
+You can use the Accessly gem directly to grant | revoke | check permissions.  We recommend the use of 'Policies' which will be covered in this README.
 Checkout our [API docs](http://www.rubydoc.info/gems/accessly) for more info on using the API directly
 
-### Policies
+### Basic Policies
 
 We use Accessly with policies in mind to capture everything we want to know about a specific permission set.  Let's take a look at a basic example:
 
