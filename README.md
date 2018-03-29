@@ -123,7 +123,7 @@ With this policy we can `grant` permissions for a user to do an action on anothe
 UserPolicy.new(user).grant!(:edit_basic_info, other_user)
 ```
 
-In our `Edit User` controller, we can check permissions
+In our `EditUserConroller`, we can check permissions
 
 ```ruby
 UserPolicy.new(user).edit_basic_info?(other_user)
@@ -194,18 +194,17 @@ This policy combines `actions` and `actions_on_objects`, introduces Accessly's s
 
 #### combined actions and actions_on_objects
 
-Accessly policies can extend support for combined use of `actions` and `actions_on_objects.`  You may want to broadly grant `edit_basic_info` permissions to some users.  The same policy can support a limited scope of permissions where the `actor` and `object` must be defined.
+Accessly policies can extend support for combined use of `actions` and `actions_on_objects.` You may want to broadly grant `edit_basic_info` permissions to some users. The same policy can support a limited scope of permissions where the `actor` and `object` must be defined.
 
 #### segment_id
 
-`segment_id` allows you to scope permission grants to a specific object id that you define.  
-In our example the `actor` belongs to an Organization model, and we set the organization_id on each permission granted for any actor using the policy.
+`segment_id` allows you to scope permission grants to a specific object id that you define. In our example the `actor` belongs to an Organization model, and we set the organization_id on each permission granted for any actor using the policy.
 
 It provides additional efficiency on query execution, and we can broadly remove permissions if the organization is no longer in the application.
 
 #### unrestricted?
 
-Accessly uses `unrestricted?` to bypass permission checks.  This policy shows that the actor has an `admin` designation which we do not want to model in permissions.  The business logic implemented here would bypass any permission check if `unrestricted?` returns `true`
+Accessly uses `unrestricted?` to bypass permission checks. This policy shows that the actor has an `admin` designation which we do not want to model in permissions. The business logic implemented here would bypass any permission check if `unrestricted?` returns `true`
 
 ## Development
 
