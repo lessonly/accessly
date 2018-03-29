@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["devops@lessonly.com"]
 
   spec.summary       = %q{Simplified access control in Rails}
-  spec.description   = %q{Simplified access control in Rails!}
+  spec.description   = %q{Use the policy pattern to define access control mechanisms in Rails. Store user-level, group-level, or org-level permission on any given record or concept in the database with ultra-fast lookups.}
   spec.homepage      = "https://github.com/lessonly/accessly"
   spec.license       = "MIT"
 
@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "database_cleaner"
-  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "database_cleaner", "~> 1.5"
+  spec.add_development_dependency "sqlite3", "~> 1.3"
   spec.add_development_dependency "rails", "~> 5.0"
 end
