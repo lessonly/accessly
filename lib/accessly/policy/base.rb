@@ -38,6 +38,14 @@ module Accessly
         self.class.model_scope
       end
 
+      # Specifies all the actors used in permission lookups.
+      # Override this method in child policy classes to specify
+      # other actors that the actor given in the initializer may
+      # inherit permissions from.
+      def actors
+        actor
+      end
+
       def unrestricted?
         false
       end
@@ -72,7 +80,7 @@ module Accessly
 
       def accessly_query
         @_accessly_query ||= begin
-          query = Accessly::Query.new(actor)
+          query = Accessly::Query.new(actors)
           query.on_segment(segment_id) unless segment_id.nil?
           query
         end
