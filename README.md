@@ -119,7 +119,7 @@ With this policy we can `grant` permissions for a user to do an action on anothe
 UserPolicy.new(user).grant!(:edit, other_user)
 ```
 
-In our `EditUserConroller`, we can check permissions
+In our `EditUserController`, we can check permissions
 
 ```ruby
 UserPolicy.new(user).edit?(other_user)
