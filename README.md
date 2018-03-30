@@ -9,7 +9,7 @@ Accessly exists from our need to answer the following questions:
 
 We were not satisfied with the available resources to answer the questions so we created Accessly!
 
-Accessly is our opinion of access control that allows us to broadly grant permissions to 'actors' (modeled as `users`, `groups`, `organizations`, etc)
+Accessly is our opinion of access control that can broadly grant permissions to 'actors' (modeled as `users`, `groups`, `organizations`, etc)
 
 ```
 Can actor1 view the content resource (/content)?
@@ -45,7 +45,7 @@ Add the ActiveRecord Migrations:
 
 ## Usage
 
-You can use the Accessly gem directly to grant | revoke | check permissions.  We recommend the use of 'Policies' which will be covered in this README.
+You can use the Accessly gem directly to grant | revoke | check permissions.  We recommend the use of 'Policies' covered in this README.
 Checkout our [API docs](http://www.rubydoc.info/gems/accessly) for more info on using the API directly
 
 We use Accessly with policies in mind to capture everything we want to know about a specific permission set. Let's take a look at some examples:
@@ -108,7 +108,7 @@ end
 ```
 
 We differentiate permissions by a `namespace` which by default is the name of your policy class.  However,
-It may be necessary to override the default behavior represented in the above example.
+it may be necessary to override the default behavior represented in the above example.
 
 Accessly can return a relation of ids on an object for a given actor's permission grants.  `Accessly::Policy::Base` requires
 that you implement `self.model_scope` with an `ActiveRecord` scope so the `list` api can return an `ActiveRecord::Relation`
@@ -264,7 +264,7 @@ end
 ```
 #### Overriding defaults
 
-Here we provide some examples of the `Accessly::Policy::Base` overrides you can make in your application. You can override the function completely or fallback to the Base implementation. The implementation strategy is up to you!
+Here we provide some examples of the `Accessly::Policy::Base` overrides you can make in an application. You can override the function completely or fallback to the `Base` method. The implementation strategy is up to you!
 
 Any call to the following functions will run the given example in the policy:
 
