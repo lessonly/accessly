@@ -74,10 +74,7 @@ In our `SuperSecretPageController`, we can check whether the user has permission
 
 ```ruby
 ApplicationFeaturePolicy.new(user).view_super_secret_page?
-```
-or by using
-
-```ruby
+# or
 ApplicationFeaturePolicy.new(user).can?(:view_super_secret_page)
 ```
 
@@ -96,9 +93,8 @@ class UserPolicy < Accessly::Policy::Base
 
   actions_on_objects(
     view: 1,
-    edit_basic_info: 2,
-    change_role: 3,
-    email: 4
+    edit: 2,
+    destroy: 3
   )
 
   def self.namespace
@@ -120,35 +116,29 @@ that you implement `self.model_scope` with an `ActiveRecord` scope so the `list`
 With this policy we can `grant` permissions for a user to do an action on another user object.
 
 ```ruby
-UserPolicy.new(user).grant!(:edit_basic_info, other_user)
+UserPolicy.new(user).grant!(:edit, other_user)
 ```
 
 In our `EditUserConroller`, we can check permissions
 
 ```ruby
-UserPolicy.new(user).edit_basic_info?(other_user)
-```
-or by using
-
-```ruby
-UserPolicy.new(user).can?(:edit_basic_info, other_user)
+UserPolicy.new(user).edit?(other_user)
+# or
+UserPolicy.new(user).can?(:edit, other_user)
 ```
 
 We can list all of the users available to edit with
 
 ```ruby
-UserPolicy.new(user).edit_basic_info
-```
-or by using
-
-```ruby
-UserPolicy.new(user).list(:edit_basic_info)
+UserPolicy.new(user).edit
+# or
+UserPolicy.new(user).list(:edit)
 ```
 
 At any point in time we can revoke permissions with
 
 ```ruby
-UserPolicy.new(user).revoke(:edit_basic_info, other_user)
+UserPolicy.new(user).revoke(:edit, other_user)
 ```
 
 ### Intermediate Action Policy
@@ -167,9 +157,8 @@ class UserPolicy < Accessly::Policy::Base
 
   actions_on_objects(
     view: 1,
-    edit_basic_info: 2,
-    change_role: 3,
-    email: 4
+    edit: 2,
+    destroy: 3,
   )
 
   def self.namespace
@@ -205,6 +194,120 @@ It provides additional efficiency on query execution, and we can broadly remove 
 #### unrestricted?
 
 Accessly uses `unrestricted?` to bypass permission checks. This policy shows that the actor has an `admin` designation which we do not want to model in permissions. The business logic implemented here would bypass any permission check if `unrestricted?` returns `true`
+
+### Advanced Action Policy
+
+Let's look at a policy that overrides `action?` and `list` APIs
+
+```ruby
+class UserPolicy < Accessly::Policy::Base
+
+  actions(
+    view: 1,
+    edit_basic_info: 2,
+    change_role: 3,
+    email: 4
+  )
+
+  actions_on_objects(
+    view: 1,
+    edit: 2,
+    destroy: 3
+  )
+
+  def self.namespace
+    User.name
+  end
+
+  def self.model_scope
+    User.all
+  end
+
+  # Override the destroy permission check for an "Action on Object"
+  def destroy?(object)
+    if actor.name == "Alice"
+      true
+    else
+      super
+    end
+  end
+
+  # Override the view permission check for both Action only and "Action on Object"
+  def view?(object = nil)
+    if object.nil?
+      if actor.name == "Bob"
+        false
+      else
+        super
+      end
+    elsif actor.name == "Alice" && object.name == "Bob"
+      true
+    else
+      super
+    end
+  end
+
+  # Override the change_role check for Action only
+  def change_role?
+    false
+  end
+
+  # Override the list method for view permissions
+  def view
+    if actor.name == "Alice"
+      User.all
+    else
+      super
+    end
+  end
+end
+```
+#### Overriding defaults
+
+Here we provide some examples of the Accessly::Policy::Base overrides you can make in your application. You can override the function completely or fallback to the Base implementation. The implementation strategy is up to you!
+
+Any call to the following functions will run the given example in the policy:
+
+#### destroy?(object)
+
+```ruby
+# Action on Object queries
+UserPolicy.new(user).destroy?(other_user)
+# or
+UserPolicy.new(user).can?(:destroy, other_user)
+```
+
+#### view?(object = nil)
+
+```ruby
+# Action queries
+UserPolicy.new(user).view?
+# or
+UserPolicy.new(user).can?(:view)
+
+# Action on Object queries
+UserPolicy.new(user).view?(other_user)
+# or
+UserPolicy.new(user).can?(:view, other_user)
+```
+
+#### change_role?
+
+```ruby
+# Action queries
+UserPolicy.new(user).change_role?
+# or
+UserPolicy.new(user).can?(:change_role)
+```
+
+#### view
+
+```ruby
+# List queries
+UserPolicy.new(user).view
+# or
+UserPolicy.new(user).list(:view)
+```
 
 ## Development
 
