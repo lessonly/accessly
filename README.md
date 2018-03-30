@@ -2,7 +2,7 @@
 
 # Accessly
 
-Accessly exists from our need to answer the following questions:
+Accessly exists out of our need to answer the following questions:
 
 1. What can a user do or see?
 2. Can a user do an arbitrary action on another object?
