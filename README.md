@@ -264,7 +264,7 @@ end
 ```
 #### Overriding defaults
 
-Here we provide some examples of the Accessly::Policy::Base overrides you can make in your application. You can override the function completely or fallback to the Base implementation. The implementation strategy is up to you!
+Here we provide some examples of the `Accessly::Policy::Base` overrides you can make in your application. You can override the function completely or fallback to the Base implementation. The implementation strategy is up to you!
 
 Any call to the following functions will run the given example in the policy:
 
