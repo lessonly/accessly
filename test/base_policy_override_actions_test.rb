@@ -79,7 +79,7 @@ describe Accessly::Policy::Base do
     user = User.create!(name: "Jim")
     policy = OverrideActionsUserPolicy.new(user)
     policy.destroy?.must_equal false
-    #policy.can?(:destroy).must_equal false
+    policy.can?(:destroy).must_equal false
   end
 
   it "allows object action checks to be customized" do
