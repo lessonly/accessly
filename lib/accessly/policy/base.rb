@@ -55,24 +55,15 @@ module Accessly
       end
 
       def can?(action, object = nil)
-        action_method_name = _resolve_action_method_name("#{action}?")
-        if (action_method_name.nil?)
-          object_id = _get_object_id(object)
-          action_id = _get_action_id(action, object_id)
-          _can_do_action?(action, action_id, object)
+        if object.nil?
+          send("#{action}?")
         else
-          send(action_method_name, object)
+          send("#{action}?", object)
         end
       end
 
       def list(action)
-        action_method_name = _resolve_action_method_name(action)
-        if (action_method_name.nil?)
-          action_id = _get_action_id(action)
-          _list_for_action(action, action_id)
-        else
-          send(action)
-        end
+        send(action)
       end
 
       def grant(action, object = nil)
