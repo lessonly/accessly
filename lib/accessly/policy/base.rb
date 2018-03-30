@@ -54,27 +54,27 @@ module Accessly
         nil
       end
 
+      def can?(action, object = nil)
+        if object.nil?
+          send("#{action}?")
+        else
+          send("#{action}?", object)
+        end
+      end
+
+      def list(action)
+        send(action)
+      end
+
       def grant(action, object = nil)
         object_id = _get_object_id(object)
-
-        action_id = if object_id.nil?
-          _get_general_action_id!(action)
-        else
-          _get_action_on_object_id!(action)
-        end
-
+        action_id = _get_action_id(action, object_id)
         grant_object.grant!(action_id, namespace, object_id)
       end
 
       def revoke(action, object = nil)
         object_id = _get_object_id(object)
-
-        action_id = if object_id.nil?
-          _get_general_action_id!(action)
-        else
-          _get_action_on_object_id!(action)
-        end
-
+        action_id = _get_action_id(action, object_id)
         revoke_object.revoke!(action_id, namespace, object_id)
       end
 
@@ -101,6 +101,14 @@ module Accessly
       end
 
       private
+
+      def _get_action_id(action, object_id = nil)
+        if object_id.nil?
+          _get_general_action_id!(action)
+        else
+          _get_action_on_object_id!(action)
+        end
+      end
 
       # Determines whether the caller is trying to call an action method
       # in the format `action_name?`. If so, this calls that method with
