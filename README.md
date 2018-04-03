@@ -81,7 +81,7 @@ ApplicationFeaturePolicy.new(user).can?(:view_super_secret_page)
 At any point in time we can revoke permissions with
 
 ```ruby
-ApplicationFeaturePolicy.new(user).revoke(:view_super_secret_page)
+ApplicationFeaturePolicy.new(user).revoke!(:view_super_secret_page)
 ```
 
 ### Basic Action on Object Policy
@@ -138,7 +138,7 @@ UserPolicy.new(user).list(:edit)
 At any point in time we can revoke permissions with
 
 ```ruby
-UserPolicy.new(user).revoke(:edit, other_user)
+UserPolicy.new(user).revoke!(:edit, other_user)
 ```
 
 ### Intermediate Action Policy

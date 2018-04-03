@@ -66,13 +66,13 @@ module Accessly
         send(action)
       end
 
-      def grant(action, object = nil)
+      def grant!(action, object = nil)
         object_id = _get_object_id(object)
         action_id = _get_action_id(action, object_id)
         grant_object.grant!(action_id, namespace, object_id)
       end
 
-      def revoke(action, object = nil)
+      def revoke!(action, object = nil)
         object_id = _get_object_id(object)
         action_id = _get_action_id(action, object_id)
         revoke_object.revoke!(action_id, namespace, object_id)

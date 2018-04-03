@@ -126,7 +126,7 @@ describe Accessly::Policy::Base do
   it "uses segment in general action grant and revoke" do
     user = User.create!(group_id: 5)
 
-    SegmentedPostPolicy.new(user).grant(:view)
+    SegmentedPostPolicy.new(user).grant!(:view)
 
     Accessly::PermittedAction.where(
       segment_id: 5,
@@ -134,7 +134,7 @@ describe Accessly::Policy::Base do
       object_type: String(Post)
     ).size.must_equal 1
 
-    SegmentedPostPolicy.new(user).revoke(:view)
+    SegmentedPostPolicy.new(user).revoke!(:view)
 
     Accessly::PermittedAction.where(
       segment_id: 5,
@@ -147,7 +147,7 @@ describe Accessly::Policy::Base do
     user = User.create!(group_id: 5)
     post = Post.create!
 
-    SegmentedPostPolicy.new(user).grant(:view, post)
+    SegmentedPostPolicy.new(user).grant!(:view, post)
 
     Accessly::PermittedActionOnObject.where(
       segment_id: 5,
@@ -156,7 +156,7 @@ describe Accessly::Policy::Base do
       object_id: post.id
     ).size.must_equal 1
 
-    SegmentedPostPolicy.new(user).revoke(:view, post)
+    SegmentedPostPolicy.new(user).revoke!(:view, post)
 
     Accessly::PermittedActionOnObject.where(
       segment_id: 5,
