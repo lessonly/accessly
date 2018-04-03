@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    accessly (0.0.1)
+    accessly (1.0.0)
       activerecord (~> 5.0)
 
 GEM
