@@ -193,7 +193,7 @@ It provides additional efficiency on query execution, and we can broadly remove 
 
 #### unrestricted?
 
-Accessly uses `unrestricted?` to bypass permission checks. This policy shows that the actor has an `admin` designation which we do not want to model in permissions. The business logic implemented here would bypass any permission check if `unrestricted?` returns `true`
+Accessly uses `unrestricted?` to bypass permission checks. This policy shows that the actor has an `admin` designation which we do not want to model in permissions. The business logic implemented here would bypass any permission check if `unrestricted?` returns `true`. When `unrestricted?` returns `true`, then `can?` and the other permission check methods (like `edit_basic_info?` in this example) automatically return `true`, and `list` and the other list methods (like `edit` in this example) returns the `ActiveRecord::Relation` given by `self.model_scope`
 
 ### Advanced Action Policy
 
@@ -309,11 +309,10 @@ UserPolicy.new(user).view
 UserPolicy.new(user).list(:view)
 ```
 
-## Development
+## Caching
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Accessly implements some internal caching to increase the performance of permission queries. If you use the same Policy object for the same lookup twice, then the second one will lookup based on the cached result. Be mindful of caching when using `revoke!` or `grant!` calls with subsequent permission queries on the same Policy object.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
