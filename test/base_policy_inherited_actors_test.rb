@@ -87,7 +87,7 @@ describe Accessly::Policy::Base do
     group = Group.create!
     user = User.create!(group: group)
 
-    UserInGroupsPolicy.new(user).grant(:view)
+    UserInGroupsPolicy.new(user).grant!(:view)
 
     Accessly::PermittedAction.where(actor: user).exists?.must_equal true
     Accessly::PermittedAction.where(actor: group).exists?.must_equal false
@@ -113,7 +113,7 @@ describe Accessly::Policy::Base do
       object_type: String(User)
     )
 
-    UserInGroupsPolicy.new(user).revoke(:view)
+    UserInGroupsPolicy.new(user).revoke!(:view)
 
     Accessly::PermittedAction.where(actor: user).exists?.must_equal false
     Accessly::PermittedAction.where(actor: group).exists?.must_equal true
