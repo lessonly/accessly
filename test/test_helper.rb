@@ -44,7 +44,7 @@ end
 
 def create_test_tables
   schema_file = File.dirname(__FILE__) + "/schema.rb"
-  puts "** Loading schema for SQLite"
+  puts "** Loading schema for Postgres"
   ActiveRecord::Base.establish_connection(pg_config)
   load(schema_file) if File.exist?(schema_file)
 end
