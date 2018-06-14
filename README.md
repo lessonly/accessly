@@ -318,6 +318,29 @@ Accessly implements some internal caching to increase the performance of permiss
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/lessonly/accessly.
 
+## Testing
+
+Local tests rely on a postgres database. from a `psql` console on your local machine
+1) Create the local 'aaa_test' database
+```
+CREATE DATABASE IF NOT EXISTS aaa_test;
+```
+
+2) Connect to the database
+```
+\c aaa_test;
+```
+
+3) Create the necessary extension
+```
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+```
+
+4) From the root of the gem folder run
+```
+rake
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

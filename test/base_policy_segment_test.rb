@@ -40,8 +40,8 @@ describe Accessly::Policy::Base do
 
     UnsegmentedPostPolicy.new(user).view?.must_equal false
     UnsegmentedPostPolicy.new(user).can?(:view).must_equal false
-    UnsegmentedPostPolicy.new(user).view?(post).must_equal false
-    UnsegmentedPostPolicy.new(user).can?(:view, post).must_equal false
+    UnsegmentedPostPolicy.new(user).edit?(post).must_equal false
+    UnsegmentedPostPolicy.new(user).can?(:edit, post).must_equal false
 
     Accessly::PermittedAction.create!(
       id: SecureRandom.uuid,
@@ -63,8 +63,8 @@ describe Accessly::Policy::Base do
       object_id: post.id
     )
 
-    UnsegmentedPostPolicy.new(user).view?(post).must_equal true
-    UnsegmentedPostPolicy.new(user).can?(:view, post).must_equal true
+    UnsegmentedPostPolicy.new(user).edit?(post).must_equal true
+    UnsegmentedPostPolicy.new(user).can?(:edit, post).must_equal true
   end
 
   it "uses segment in general action lookup" do

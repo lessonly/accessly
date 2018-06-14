@@ -33,10 +33,10 @@ def setup_database_cleaner
   end
 end
 
-def sqlite_config
+def pg_config
   {
-    adapter: "sqlite3",
-    database: "aaa_test.sqlite3",
+    adapter: "postgresql",
+    database: "aaa_test",
     pool: 5,
     timeout: 5000
   }
@@ -45,7 +45,7 @@ end
 def create_test_tables
   schema_file = File.dirname(__FILE__) + "/schema.rb"
   puts "** Loading schema for SQLite"
-  ActiveRecord::Base.establish_connection(sqlite_config)
+  ActiveRecord::Base.establish_connection(pg_config)
   load(schema_file) if File.exist?(schema_file)
 end
 

@@ -267,6 +267,7 @@ module Accessly
 
       def self._actions
         @@_actions ||= {}
+        @@_actions[self.name] ||= {}
       end
 
       def _actions
@@ -275,6 +276,7 @@ module Accessly
 
       def self._actions_on_objects
         @@_actions_on_objects ||= {}
+        @@_actions_on_objects[self.name] ||= {}
       end
 
       def _actions_on_objects
