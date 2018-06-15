@@ -323,7 +323,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/lesson
 Local tests rely on a postgres database. from a `psql` console on your local machine
 1) Create the local 'aaa_test' database
 ```
-CREATE DATABASE IF NOT EXISTS aaa_test;
+CREATE DATABASE aaa_test;
 ```
 
 2) Connect to the database
