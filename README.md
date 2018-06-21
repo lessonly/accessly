@@ -64,6 +64,18 @@ class ApplicationFeaturePolicy < Accessly::Policy::Base
 end
 ```
 
+#### ACTIONS
+
+Accessly policies rely on a definition of `actions` and/or `actions_on_objects` for effective use. This example uses `actions` which represent a "permission" that can be granted to an actor for later validation within your app's business logic.
+
+- `actions` map a symbol to an integer value.
+- An `action` value should be a unique integer within each policy.
+- removing/editing `actions` and values can have negative consequences if the underlying data is not migrated
+
+Defined policy `actions` become part of the policy API. (see examples below)
+
+#### Policy API Example
+
 With this policy we can `grant` permissions to a user
 
 ```ruby
@@ -106,6 +118,18 @@ class UserPolicy < Accessly::Policy::Base
   end
 end
 ```
+
+#### ACTIONS ON OBJECTS
+
+Accessly policies rely on a definition of `actions` and/or `actions_on_objects` for effective use. This example uses `actions_on_objects` which associate a "permission" with an object in your system.  The "object" is typically an ActiveRecord object.
+
+- `actions_on_objects` map a symbol to an integer value.
+- An `actions_on_objects` value should be a unique integer within each policy.
+- removing/editing `actions_on_objects` and values can have negative consequences if the underlying data is not migrated
+
+Defined policy `actions_on_objects` become part of the policy API. (see examples below)
+
+#### Policy API Example
 
 We differentiate permissions by a `namespace` which by default is the name of your policy class.  However,
 it may be necessary to override the default behavior represented in the above example.
