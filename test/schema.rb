@@ -1,4 +1,6 @@
 ActiveRecord::Schema.define(version: 1) do
+  ActiveRecord::Base.connection.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+
   create_table :users, force: true do |t|
     t.column :name, :string
     t.column :admin, :boolean
