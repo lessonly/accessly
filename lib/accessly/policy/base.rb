@@ -1,6 +1,10 @@
 module Accessly
   module Policy
     class Base
+      # Module that will hold our meta-programmed action methods just above
+      # the policy class in the inheritance hierarchy; allowing for them to
+      # be overridden in the policy.
+      ACTIONS_MODULE = :Actions
 
       attr_reader :actor
 
@@ -8,17 +12,82 @@ module Accessly
         @actor = actor
       end
 
+      # Meta-programs action methods from actions supplied.
+      # Used in policies as a DSL to declare actions.
+      #
+      # This defines the actions on the `actions_module` so that they are
+      # positioned higher in the inheritance tree than methods defined on the
+      # class itself. This will allow us to define methods that override these
+      # base methods and call `super`.
+      #
+      # @param actions [Hash] the actions to define on the policy
+      #
+      # @example Define Actions
+      #
+      #   # This example causes the following methods to be defined:
+      #   # some_action? : Returns true if the actor has the some_action
+      #   #   permission, false otherwise
+      #   # flip_the_flop? : Returns true if the actor has the flip_the_flop
+      #   #   permission, false otherwise
+      #   # create? : Returns true if the actor has the create permission, false
+      #   #   otherwise
+      #   actions(
+      #     some_action: 1,
+      #     flip_the_flop: 2,
+      #     create: 3
+      #   )
+      #
+      # @return [Hash] actions
       def self.actions(actions)
         _actions.merge!(actions)
         actions.each do |action, action_id|
-          _define_action_methods(action, action_id)
+          actions_module.module_eval do
+            define_method(:"#{action}?") do |*args|
+              _can_do_action?(action, action_id, args.first)
+            end
+          end
         end
       end
 
+      # Meta-programs action_on_objects methods from the actions supplied.
+      # Used in policies as a DSL to declare actions on objects.
+      # It is different from actions in that it will also define a method
+      # for listing all objects authorized with this action for the given
+      # actor and that these actions will always be associated not only with
+      # an actor, but with an object of the action.
+      #
+      # @param actions_on_objects [Hash] the actions on objects to define
+      # on the policy
+      #
+      # @example Define Actions On Objects
+      #
+      #   # This example causes the following methods to be defined:
+      #   # edit : Returns an ActiveRecord::Relation of the objects on which
+      #   #   the actor has the edit permission
+      #   # edit?(object) : Returns true if the actor has the edit permission
+      #   #   on the given object, false otherwise
+      #   # show : Returns an ActiveRecord::Relation of the objects on which
+      #   #   the actor has the show permission
+      #   # show?(object) : Returns true if the actor has the show permission
+      #   #   on the given object, false otherwise
+      #   actions_on_objects(
+      #     edit: 1,
+      #     show: 2
+      #   )
+      #
+      # @return [Hash] actions_on_objects
       def self.actions_on_objects(actions_on_objects)
         _actions_on_objects.merge!(actions_on_objects)
         actions_on_objects.each do |action, action_id|
-          _define_action_methods(action, action_id)
+          actions_module.module_eval do
+            define_method(:"#{action}?") do |*args|
+              _can_do_action?(action, action_id, args.first)
+            end
+
+            define_method(action) do |*args|
+              _list_for_action(action, action_id)
+            end
+          end
         end
       end
 
@@ -102,85 +171,31 @@ module Accessly
 
       private
 
+      # Accessor for the actions module that will hold our meta-programmed
+      # methods.
+      # We put these methods in this module so that they are positioned
+      # above the policy in the inheritance chain. We can then override
+      # the methods in our policy as needed and call super to access the
+      # previous definition.
+      #
+      # @return [ACTIONS_MODULE] the module for holding actions currently
+      #   defined on this class.
+      def self.actions_module
+        if const_defined?(ACTIONS_MODULE, _search_ancestors = false)
+          mod = const_get(ACTIONS_MODULE)
+        else
+          mod = const_set(ACTIONS_MODULE, Module.new)
+          include mod
+        end
+
+        mod
+      end
+
       def _get_action_id(action, object_id = nil)
         if object_id.nil?
           _get_general_action_id!(action)
         else
           _get_action_on_object_id!(action)
-        end
-      end
-
-      # Determines whether the caller is trying to call an action method
-      # in the format `action_name?`. If so, this calls that method with
-      # the given arguments.
-      def method_missing(method_name, *args)
-        action_method_name = _resolve_action_method_name(method_name)
-        if action_method_name.nil?
-          super
-        else
-          send(action_method_name, *args)
-        end
-      end
-
-      # Parses an action name from a given method name of the format
-      # `action_name?` or `action_name and returns the action method
-      # or the list method name. If the method name does not follow
-      # one of those formats, this assumes the caller is not calling
-      # an action or list method and returns nil.
-      def _resolve_action_method_name(method_name)
-        action_method_match = /\A(\w+)(\??)\z/.match(method_name)
-
-        return nil if action_method_match.nil? || action_method_match[1].nil?
-
-        action_name = action_method_match[1].to_sym
-        is_predicate = action_method_match[2] == "?"
-
-        if !_action_defined?(action_name)
-          nil
-        elsif is_predicate
-          _action_method_name(action_name)
-        else
-          _action_list_method_name(action_name)
-        end
-      end
-
-      # The implementation for action methods follow the naming format
-      # `_resolve_action_name`. This is to allow child Policies to override
-      # the action method and still be able to call `super` when they
-      # need to call the base implementation of the action method.
-      def self._action_method_name(action_name)
-        "_resolve_#{action_name}"
-      end
-
-      def _action_method_name(action_name)
-        self.class._action_method_name(action_name)
-      end
-
-      # The implementation for list methods follow the naming format
-      # `_list_action_name`. This is to allow child Policies to override
-      # the list method and still be able to call `super` when they
-      # need to call the base implementation of the lsit method.
-      def self._action_list_method_name(action_name)
-        "_list_#{action_name}"
-      end
-
-      def _action_list_method_name(action_name)
-        self.class._action_list_method_name(action_name)
-      end
-
-      # Defines the action method on the Policy class for the given
-      # action name.
-      def self._define_action_methods(action, action_id)
-        unless method_defined?(_action_method_name(action))
-          define_method(_action_method_name(action)) do |*args|
-            _can_do_action?(action, action_id, args.first)
-          end
-        end
-
-        unless method_defined?(_action_list_method_name(action))
-          define_method(_action_list_method_name(action)) do |*args|
-            _list_for_action(action, action_id)
-          end
         end
       end
 
