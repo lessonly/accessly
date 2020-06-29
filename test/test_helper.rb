@@ -37,6 +37,7 @@ def pg_config
   {
     adapter: "postgresql",
     database: "aaa_test",
+    host: "localhost",
     pool: 5,
     timeout: 5000
   }
