@@ -52,3 +52,6 @@ pkg/
 # Ignore generated yard docs
 .yardoc/
 doc/
+
+# Ignore Gemfile.lock for gem development
+Gemfile.lock
