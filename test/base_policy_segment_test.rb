@@ -38,10 +38,10 @@ describe Accessly::Policy::Base do
     user = User.create!(group_id: 4)
     post = Post.create!
 
-    UnsegmentedPostPolicy.new(user).view?.must_equal false
-    UnsegmentedPostPolicy.new(user).can?(:view).must_equal false
-    UnsegmentedPostPolicy.new(user).edit?(post).must_equal false
-    UnsegmentedPostPolicy.new(user).can?(:edit, post).must_equal false
+    _(UnsegmentedPostPolicy.new(user).view?).must_equal false
+    _(UnsegmentedPostPolicy.new(user).can?(:view)).must_equal false
+    _(UnsegmentedPostPolicy.new(user).edit?(post)).must_equal false
+    _(UnsegmentedPostPolicy.new(user).can?(:edit, post)).must_equal false
 
     Accessly::PermittedAction.create!(
       id: SecureRandom.uuid,
@@ -51,8 +51,8 @@ describe Accessly::Policy::Base do
       object_type: String(Post)
     )
 
-    UnsegmentedPostPolicy.new(user).view?.must_equal true
-    UnsegmentedPostPolicy.new(user).can?(:view).must_equal true
+    _(UnsegmentedPostPolicy.new(user).view?).must_equal true
+    _(UnsegmentedPostPolicy.new(user).can?(:view)).must_equal true
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -63,8 +63,8 @@ describe Accessly::Policy::Base do
       object_id: post.id
     )
 
-    UnsegmentedPostPolicy.new(user).edit?(post).must_equal true
-    UnsegmentedPostPolicy.new(user).can?(:edit, post).must_equal true
+    _(UnsegmentedPostPolicy.new(user).edit?(post)).must_equal true
+    _(UnsegmentedPostPolicy.new(user).can?(:edit, post)).must_equal true
   end
 
   it "uses segment in general action lookup" do
@@ -77,8 +77,8 @@ describe Accessly::Policy::Base do
       object_type: String(Post)
     )
 
-    SegmentedPostPolicy.new(user).view?.must_equal false
-    SegmentedPostPolicy.new(user).can?(:view).must_equal false
+    _(SegmentedPostPolicy.new(user).view?).must_equal false
+    _(SegmentedPostPolicy.new(user).can?(:view)).must_equal false
 
     Accessly::PermittedAction.create!(
       id: SecureRandom.uuid,
@@ -88,8 +88,8 @@ describe Accessly::Policy::Base do
       object_type: String(Post)
     )
 
-    SegmentedPostPolicy.new(user).view?.must_equal true
-    SegmentedPostPolicy.new(user).can?(:view).must_equal true
+    _(SegmentedPostPolicy.new(user).view?).must_equal true
+    _(SegmentedPostPolicy.new(user).can?(:view)).must_equal true
 
   end
 
@@ -106,8 +106,8 @@ describe Accessly::Policy::Base do
       object_id: post.id
     )
 
-    SegmentedPostPolicy.new(user).view?(post).must_equal false
-    SegmentedPostPolicy.new(user).can?(:view, post).must_equal false
+    _(SegmentedPostPolicy.new(user).view?(post)).must_equal false
+    _(SegmentedPostPolicy.new(user).can?(:view, post)).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
       id: SecureRandom.uuid,
@@ -118,8 +118,8 @@ describe Accessly::Policy::Base do
       object_id: post.id
     )
 
-    SegmentedPostPolicy.new(user).view?(post).must_equal true
-    SegmentedPostPolicy.new(user).can?(:view, post).must_equal true
+    _(SegmentedPostPolicy.new(user).view?(post)).must_equal true
+    _(SegmentedPostPolicy.new(user).can?(:view, post)).must_equal true
 
   end
 
@@ -128,19 +128,19 @@ describe Accessly::Policy::Base do
 
     SegmentedPostPolicy.new(user).grant!(:view)
 
-    Accessly::PermittedAction.where(
+    _(Accessly::PermittedAction.where(
       segment_id: 5,
       actor: user,
       object_type: String(Post)
-    ).size.must_equal 1
+    ).size).must_equal 1
 
     SegmentedPostPolicy.new(user).revoke!(:view)
 
-    Accessly::PermittedAction.where(
+    _(Accessly::PermittedAction.where(
       segment_id: 5,
       actor: user,
       object_type: String(Post)
-    ).size.must_equal 0
+    ).size).must_equal 0
   end
 
   it "uses segment in action on object grant and revoke" do
@@ -149,21 +149,21 @@ describe Accessly::Policy::Base do
 
     SegmentedPostPolicy.new(user).grant!(:view, post)
 
-    Accessly::PermittedActionOnObject.where(
+    _(Accessly::PermittedActionOnObject.where(
       segment_id: 5,
       actor: user,
       object_type: String(Post),
       object_id: post.id
-    ).size.must_equal 1
+    ).size).must_equal 1
 
     SegmentedPostPolicy.new(user).revoke!(:view, post)
 
-    Accessly::PermittedActionOnObject.where(
+    _(Accessly::PermittedActionOnObject.where(
       segment_id: 5,
       actor: user,
       object_type: String(Post),
       object_id: post.id
-    ).size.must_equal 0
+    ).size).must_equal 0
   end
 
   it "uses segment in action list lookup" do
@@ -193,7 +193,7 @@ describe Accessly::Policy::Base do
       object_id: post_outside_segment.id
     )
 
-    SegmentedPostPolicy.new(user).view.order(:id).must_equal [post_in_segment1, post_in_segment2]
-    SegmentedPostPolicy.new(user).list(:view).order(:id).must_equal [post_in_segment1, post_in_segment2]
+    _(SegmentedPostPolicy.new(user).view.order(:id)).must_equal [post_in_segment1, post_in_segment2]
+    _(SegmentedPostPolicy.new(user).list(:view).order(:id)).must_equal [post_in_segment1, post_in_segment2]
   end
 end
