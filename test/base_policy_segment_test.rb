@@ -44,7 +44,6 @@ describe Accessly::Policy::Base do
     UnsegmentedPostPolicy.new(user).can?(:edit, post).must_equal false
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,
@@ -55,7 +54,6 @@ describe Accessly::Policy::Base do
     UnsegmentedPostPolicy.new(user).can?(:view).must_equal true
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,
@@ -70,7 +68,6 @@ describe Accessly::Policy::Base do
   it "uses segment in general action lookup" do
     user = User.create!(group_id: 4)
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,
@@ -81,7 +78,6 @@ describe Accessly::Policy::Base do
     SegmentedPostPolicy.new(user).can?(:view).must_equal false
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: user.group_id,
       actor: user,
       action: 1,
@@ -98,7 +94,6 @@ describe Accessly::Policy::Base do
     post = Post.create!
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,
@@ -110,7 +105,6 @@ describe Accessly::Policy::Base do
     SegmentedPostPolicy.new(user).can?(:view, post).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: user.group_id,
       actor: user,
       action: 1,
@@ -175,7 +169,6 @@ describe Accessly::Policy::Base do
 
     [post_in_segment1, post_in_segment2].each do |post|
       Accessly::PermittedActionOnObject.create!(
-        id: SecureRandom.uuid,
         segment_id: user.group_id,
         actor: user,
         action: 1,
@@ -185,7 +178,6 @@ describe Accessly::Policy::Base do
     end
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,

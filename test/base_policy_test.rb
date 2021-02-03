@@ -70,7 +70,6 @@ describe Accessly::Policy::Base do
     UserPolicy.new(user).edit_basic_info?.must_equal false
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 2,
@@ -89,7 +88,6 @@ describe Accessly::Policy::Base do
     policy.can?(:edit_basic_info).must_equal false
 
     permission = Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 2,
@@ -116,7 +114,6 @@ describe Accessly::Policy::Base do
     UserPolicy.new(user).can?(:email, other_user).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 4,
@@ -136,7 +133,6 @@ describe Accessly::Policy::Base do
     policy.can?(:email, other_user).must_equal false
 
     permission = Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 4,
@@ -159,7 +155,6 @@ describe Accessly::Policy::Base do
     user = User.create!
 
     permission = Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,
@@ -200,7 +195,6 @@ describe Accessly::Policy::Base do
 
     permitted_users.each do |permitted_user|
       Accessly::PermittedActionOnObject.create!(
-        id: SecureRandom.uuid,
         segment_id: -1,
         actor: user,
         action: 1,
@@ -211,7 +205,6 @@ describe Accessly::Policy::Base do
 
     other_permitted_users.each do |permitted_user|
       Accessly::PermittedActionOnObject.create!(
-        id: SecureRandom.uuid,
         segment_id: -1,
         actor: other_user,
         action: 1,

@@ -8,12 +8,11 @@ describe Accessly do
     Accessly::Query.new(actor).can?(1, Post, post.id).must_equal false
   end
 
-  it "retuns true when the actor has access to an object" do
+  it "returns true when the actor has access to an object" do
     actor = User.create!
     post  = Post.create!
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor,
       action: 1,
       object_type: Post,
@@ -23,13 +22,12 @@ describe Accessly do
     Accessly::Query.new(actor).can?(1, Post, post.id).must_equal true
   end
 
-  it "retuns true when the actor has some sort of access to an object" do
+  it "returns true when the actor has some sort of access to an object" do
     actor = User.create!
     post  = Post.create!
     group = Group.create!
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor,
       action: 1,
       object_type: Post,
@@ -37,7 +35,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: 1,
       actor: group,
       action: 2,
@@ -71,7 +68,6 @@ describe Accessly do
     group2 = Group.create!
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor1,
       action: 1,
       object_type: Post,
@@ -79,7 +75,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor3,
       action: 1,
       object_type: Post,
@@ -87,7 +82,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: group1,
       action: 2,
       object_type: Post,
@@ -95,7 +89,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: 1,
       actor: group1,
       action: 5,
