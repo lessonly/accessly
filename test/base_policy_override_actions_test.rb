@@ -72,14 +72,14 @@ describe Accessly::Policy::Base do
     # User named Aaron can always destroy users
     user = User.create!(name: "Aaron")
     policy = OverrideActionsUserPolicy.new(user)
-    policy.destroy?.must_equal true
-    policy.can?(:destroy).must_equal true
+    _(policy.destroy?).must_equal true
+    _(policy.can?(:destroy)).must_equal true
 
     # User not named Aaron gets normal privileges
     user = User.create!(name: "Jim")
     policy = OverrideActionsUserPolicy.new(user)
-    policy.destroy?.must_equal false
-    policy.can?(:destroy).must_equal false
+    _(policy.destroy?).must_equal false
+    _(policy.can?(:destroy)).must_equal false
   end
 
   it "allows object action checks to be customized" do
@@ -87,12 +87,12 @@ describe Accessly::Policy::Base do
     user = User.create!
     other_user = User.create!(name: "Aaron")
     policy = OverrideActionsUserPolicy.new(user)
-    policy.email?(other_user).must_equal true
-    policy.can?(:email, other_user).must_equal true
+    _(policy.email?(other_user)).must_equal true
+    _(policy.can?(:email, other_user)).must_equal true
 
     # Emailing other users goes through normal privilege check
-    policy.email?(user).must_equal false
-    policy.can?(:email, user).must_equal false
+    _(policy.email?(user)).must_equal false
+    _(policy.can?(:email, user)).must_equal false
   end
 
   it "allows checks that are both general and on an object to be customized" do
@@ -100,20 +100,20 @@ describe Accessly::Policy::Base do
     user = User.create!(name: "Bob")
     other_user = User.create!(name: "Aaron")
     policy = OverrideActionsUserPolicy.new(user)
-    policy.change_role?.must_equal false
-    policy.can?(:change_role).must_equal false
+    _(policy.change_role?).must_equal false
+    _(policy.can?(:change_role)).must_equal false
 
     # User named Bob can change role for specific user named Aaron
-    policy.change_role?(other_user).must_equal true
-    policy.can?(:change_role, other_user).must_equal true
+    _(policy.change_role?(other_user)).must_equal true
+    _(policy.can?(:change_role, other_user)).must_equal true
 
     # User named Aaron has normal privileges
     policy = OverrideActionsUserPolicy.new(other_user)
-    policy.change_role?.must_equal false
-    policy.can?(:change_role).must_equal false
+    _(policy.change_role?).must_equal false
+    _(policy.can?(:change_role)).must_equal false
 
-    policy.change_role?(user).must_equal false
-    policy.can?(:change_role, user).must_equal false
+    _(policy.change_role?(user)).must_equal false
+    _(policy.can?(:change_role, user)).must_equal false
   end
 
   it "allows action lists to be overridden" do
@@ -125,9 +125,9 @@ describe Accessly::Policy::Base do
     # Other users cannot view any users
     other_user = User.create!(name: "Bob")
 
-    OverrideActionsUserPolicy.new(user).view.order(:id).must_equal [user, other_user]
-    OverrideActionsUserPolicy.new(user).list(:view).order(:id).must_equal [user, other_user]
-    OverrideActionsUserPolicy.new(other_user).view.order(:id).must_equal []
-    OverrideActionsUserPolicy.new(other_user).list(:view).order(:id).must_equal []
+    _(OverrideActionsUserPolicy.new(user).view.order(:id)).must_equal [user, other_user]
+    _(OverrideActionsUserPolicy.new(user).list(:view).order(:id)).must_equal [user, other_user]
+    _(OverrideActionsUserPolicy.new(other_user).view.order(:id)).must_equal []
+    _(OverrideActionsUserPolicy.new(other_user).list(:view).order(:id)).must_equal []
   end
 end
