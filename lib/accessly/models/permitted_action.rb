@@ -9,7 +9,7 @@ module Accessly
     private
 
     def set_uuid
-      return unless PermittedActionOnObject.columns_hash['id'].type == :uuid
+      return unless PermittedAction.columns_hash['id'].type == :uuid
 
       self.id = SecureRandom.uuid
     end
