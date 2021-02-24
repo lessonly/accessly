@@ -58,9 +58,9 @@ module Accessly
         end
       end
 
-      private    
+      private
 
-      def general_action_grant(action_id, object_type)         
+      def general_action_grant(action_id, object_type)  
         Accessly::PermittedAction.create!(
           segment_id: @segment_id,
           actor: @actor,
