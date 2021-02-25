@@ -18,8 +18,8 @@ class Accessly::InstallGeneratorTest < ::Rails::Generators::TestCase
     migration2 = migration_file_name("db/migrate/create_permitted_action_on_objects")
     bad_migration = migration_file_name("db/migrate/accessly_not_exist")
 
-    migration1.wont_be_nil
-    migration2.wont_be_nil
-    bad_migration.must_be_nil
+    refute_nil(migration1)
+    refute_nil(migration2)
+    assert_nil(bad_migration)
   end
 end

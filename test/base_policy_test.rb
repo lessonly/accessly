@@ -67,7 +67,7 @@ describe Accessly::Policy::Base do
   it "looks up non-object permissions from the Accessly library" do
     user = User.create!
 
-    UserPolicy.new(user).edit_basic_info?.must_equal false
+    _(UserPolicy.new(user).edit_basic_info?).must_equal false
 
     Accessly::PermittedAction.create!(
       segment_id: -1,
@@ -76,16 +76,16 @@ describe Accessly::Policy::Base do
       object_type: String(User)
     )
 
-    UserPolicy.new(user).edit_basic_info?.must_equal true
-    UserPolicy.new(user).can?(:edit_basic_info).must_equal true
+    _(UserPolicy.new(user).edit_basic_info?).must_equal true
+    _(UserPolicy.new(user).can?(:edit_basic_info)).must_equal true
   end
 
   it "caches non-object permission lookups" do
     user = User.create!
     policy = UserPolicy.new(user)
 
-    policy.edit_basic_info?.must_equal false
-    policy.can?(:edit_basic_info).must_equal false
+    _(policy.edit_basic_info?).must_equal false
+    _(policy.can?(:edit_basic_info)).must_equal false
 
     permission = Accessly::PermittedAction.create!(
       segment_id: -1,
@@ -94,24 +94,24 @@ describe Accessly::Policy::Base do
       object_type: String(User)
     )
 
-    policy.edit_basic_info?.must_equal false
-    policy.can?(:edit_basic_info).must_equal false
+    _(policy.edit_basic_info?).must_equal false
+    _(policy.can?(:edit_basic_info)).must_equal false
 
     policy = UserPolicy.new(user)
-    policy.edit_basic_info?.must_equal true
-    policy.can?(:edit_basic_info).must_equal true
+    _(policy.edit_basic_info?).must_equal true
+    _(policy.can?(:edit_basic_info)).must_equal true
 
     permission.destroy!
-    policy.edit_basic_info?.must_equal true
-    policy.can?(:edit_basic_info).must_equal true
+    _(policy.edit_basic_info?).must_equal true
+    _(policy.can?(:edit_basic_info)).must_equal true
   end
 
   it "looks up object permissions from the Accessly library" do
     user = User.create!
     other_user = User.create!
 
-    UserPolicy.new(user).email?(other_user).must_equal false
-    UserPolicy.new(user).can?(:email, other_user).must_equal false
+    _(UserPolicy.new(user).email?(other_user)).must_equal false
+    _(UserPolicy.new(user).can?(:email, other_user)).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
       segment_id: -1,
@@ -120,8 +120,8 @@ describe Accessly::Policy::Base do
       object: other_user
     )
 
-    UserPolicy.new(user).email?(other_user).must_equal true
-    UserPolicy.new(user).can?(:email, other_user).must_equal true
+    _(UserPolicy.new(user).email?(other_user)).must_equal true
+    _(UserPolicy.new(user).can?(:email, other_user)).must_equal true
   end
 
   it "caches object permission lookups" do
@@ -129,8 +129,8 @@ describe Accessly::Policy::Base do
     other_user = User.create!
     policy = UserPolicy.new(user)
 
-    policy.email?(other_user).must_equal false
-    policy.can?(:email, other_user).must_equal false
+    _(policy.email?(other_user)).must_equal false
+    _(policy.can?(:email, other_user)).must_equal false
 
     permission = Accessly::PermittedActionOnObject.create!(
       segment_id: -1,
@@ -139,16 +139,16 @@ describe Accessly::Policy::Base do
       object: other_user
     )
 
-    policy.email?(other_user).must_equal false
-    policy.can?(:email, other_user).must_equal false
+    _(policy.email?(other_user)).must_equal false
+    _(policy.can?(:email, other_user)).must_equal false
 
     policy = UserPolicy.new(user)
-    policy.email?(other_user).must_equal true
-    policy.can?(:email, other_user).must_equal true
+    _(policy.email?(other_user)).must_equal true
+    _(policy.can?(:email, other_user)).must_equal true
 
     permission.destroy!
-    policy.email?(other_user).must_equal true
-    policy.can?(:email, other_user).must_equal true
+    _(policy.email?(other_user)).must_equal true
+    _(policy.can?(:email, other_user)).must_equal true
   end
 
   it "uses the policy class name as the default namespace" do
@@ -162,8 +162,8 @@ describe Accessly::Policy::Base do
     )
 
     policy = DefaultNamespacePolicy.new(user)
-    policy.view?.must_equal true
-    policy.can?(:view).must_equal true
+    _(policy.view?).must_equal true
+    _(policy.can?(:view)).must_equal true
   end
 
   it "returns true automatically when unrestricted? returns true" do
@@ -172,18 +172,18 @@ describe Accessly::Policy::Base do
 
     # Non-admin has no permissions set
     non_admin_policy = UserPolicy.new(non_admin_user)
-    non_admin_policy.view?.must_equal false
-    non_admin_policy.can?(:view).must_equal false
-    non_admin_policy.view?(admin_user).must_equal false
-    non_admin_policy.can?(:view, admin_user).must_equal false
+    _(non_admin_policy.view?).must_equal false
+    _(non_admin_policy.can?(:view)).must_equal false
+    _(non_admin_policy.view?(admin_user)).must_equal false
+    _(non_admin_policy.can?(:view, admin_user)).must_equal false
 
 
     # Admin has no permissions set, but can do anything
     admin_policy = UserPolicy.new(admin_user)
-    admin_policy.view?.must_equal true
-    admin_policy.can?(:view).must_equal true
-    admin_policy.view?(non_admin_user).must_equal true
-    admin_policy.can?(:view, non_admin_user).must_equal true
+    _(admin_policy.view?).must_equal true
+    _(admin_policy.can?(:view)).must_equal true
+    _(admin_policy.view?(non_admin_user)).must_equal true
+    _(admin_policy.can?(:view, non_admin_user)).must_equal true
   end
 
   it "lists objects the actor has the permission on" do
@@ -215,13 +215,13 @@ describe Accessly::Policy::Base do
 
     user_policy = UserPolicy.new(user)
     granted_users = user_policy.view.order(:id)
-    granted_users.must_equal permitted_users
-    (user_policy.list(:view).order(:id)).must_equal permitted_users
+    _(granted_users).must_equal permitted_users
+    _(user_policy.list(:view).order(:id)).must_equal permitted_users
 
     other_user_policy = UserPolicy.new(other_user)
     other_granted_users = other_user_policy.view.order(:id)
-    other_granted_users.must_equal other_permitted_users
-    (other_user_policy.list(:view).order(:id)).must_equal other_permitted_users
+    _(other_granted_users).must_equal other_permitted_users
+    _(other_user_policy.list(:view).order(:id)).must_equal other_permitted_users
   end
 
   it "allows unrestricted actors to list all objects in the scope" do
@@ -232,7 +232,7 @@ describe Accessly::Policy::Base do
 
     policy = UserPolicy.new(admin)
     granted_users = policy.view.order(:id)
-    granted_users.must_equal all_users
-    (policy.list(:view).order(:id)).must_equal all_users
+    _(granted_users).must_equal all_users
+    _(policy.list(:view).order(:id)).must_equal all_users
   end
 end

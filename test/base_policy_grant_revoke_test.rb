@@ -26,37 +26,37 @@ describe Accessly::Policy::Base do
 
   it "grants the actor a general permission" do
     user = User.create!
-    GrantRevokePolicy.new(user).view?.must_equal false
+    _(GrantRevokePolicy.new(user).view?).must_equal false
 
     GrantRevokePolicy.new(user).grant!(:view)
-    GrantRevokePolicy.new(user).view?.must_equal true
+    _(GrantRevokePolicy.new(user).view?).must_equal true
   end
 
   it "grants the actor permission on an object" do
     user = User.create!
     other_user = User.create!
-    GrantRevokePolicy.new(user).view?(other_user).must_equal false
+    _(GrantRevokePolicy.new(user).view?(other_user)).must_equal false
 
     GrantRevokePolicy.new(user).grant!(:view, other_user)
-    GrantRevokePolicy.new(user).view?(other_user).must_equal true
+    _(GrantRevokePolicy.new(user).view?(other_user)).must_equal true
   end
 
   it "revokes a general permission from the actor" do
     user = User.create!
     GrantRevokePolicy.new(user).grant!(:view)
-    GrantRevokePolicy.new(user).view?.must_equal true
+    _(GrantRevokePolicy.new(user).view?).must_equal true
 
     GrantRevokePolicy.new(user).revoke!(:view)
-    GrantRevokePolicy.new(user).view?.must_equal false
+    _(GrantRevokePolicy.new(user).view?).must_equal false
   end
 
   it "revokes a permission on an object from the actor" do
     user = User.create!
     other_user = User.create!
     GrantRevokePolicy.new(user).grant!(:view, other_user)
-    GrantRevokePolicy.new(user).view?(other_user).must_equal true
+    _(GrantRevokePolicy.new(user).view?(other_user)).must_equal true
 
     GrantRevokePolicy.new(user).revoke!(:view, other_user)
-    GrantRevokePolicy.new(user).view?(other_user).must_equal false
+    _(GrantRevokePolicy.new(user).view?(other_user)).must_equal false
   end
 end

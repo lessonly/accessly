@@ -4,7 +4,7 @@ describe Accessly do
   it "caches the result of general permitted action" do
     actor = User.create!
     query = Accessly::Query.new(actor)
-    query.can?(1, Post).must_equal false
+    _(query.can?(1, Post)).must_equal false
 
     Accessly::PermittedAction.create!(
       actor: actor,
@@ -12,8 +12,8 @@ describe Accessly do
       object_type: Post
     )
 
-    query.can?(1, Post).must_equal false
-    Accessly::Query.new(actor).can?(1, Post).must_equal true
+    _(query.can?(1, Post)).must_equal false
+    _(Accessly::Query.new(actor).can?(1, Post)).must_equal true
   end
 
   it "caches the result of permitted action on object" do
@@ -28,11 +28,11 @@ describe Accessly do
     )
 
     query = Accessly::Query.new(actor)
-    query.can?(9, Post, post.id).must_equal true
+    _(query.can?(9, Post, post.id)).must_equal true
 
     permitted_action.destroy!
 
-    query.can?(9, Post, post.id).must_equal true
-    Accessly::Query.new(actor).can?(9, Post, post.id).must_equal false
+    _(query.can?(9, Post, post.id)).must_equal true
+    _(Accessly::Query.new(actor).can?(9, Post, post.id)).must_equal false
   end
 end
