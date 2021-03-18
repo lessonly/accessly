@@ -5,7 +5,7 @@ describe Accessly do
   it "returns nil after a successful revoke" do
     actor = User.create!
     Accessly::PermittedAction.create!(actor: actor, action: 1, object_type: "Post")
-    Accessly::PermittedAction.where(actor: actor).count.must_equal 1
+    _(Accessly::PermittedAction.where(actor: actor).count).must_equal 1
 
     _(Accessly::Permission::Revoke.new(actor).revoke!(1, Post)).must_be_nil
     _(Accessly::PermittedAction.where(actor: actor).count).must_equal 0
