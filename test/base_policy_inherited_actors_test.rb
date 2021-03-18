@@ -29,7 +29,6 @@ describe Accessly::Policy::Base do
     _(UserInGroupsPolicy.new(user).can?(:view)).must_equal false
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: group,
       action: 1,
@@ -49,7 +48,6 @@ describe Accessly::Policy::Base do
     _(UserInGroupsPolicy.new(user).can?(:view, other_user)).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: group,
       action: 1,
@@ -70,7 +68,6 @@ describe Accessly::Policy::Base do
     _(UserInGroupsPolicy.new(user).can?(:view, other_user)).must_equal false
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: group,
       action: 1,
@@ -98,7 +95,6 @@ describe Accessly::Policy::Base do
     user = User.create!(group: group)
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: user,
       action: 1,
@@ -106,7 +102,6 @@ describe Accessly::Policy::Base do
     )
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       segment_id: -1,
       actor: group,
       action: 1,

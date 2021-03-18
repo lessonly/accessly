@@ -62,7 +62,6 @@ module Accessly
 
       def general_action_grant(action_id, object_type)
         Accessly::PermittedAction.create!(
-          id: SecureRandom.uuid,
           segment_id: @segment_id,
           actor: @actor,
           action: action_id,
@@ -77,7 +76,6 @@ module Accessly
 
       def object_action_grant(action_id, object_type, object_id)
         Accessly::PermittedActionOnObject.create!(
-          id: SecureRandom.uuid,
           segment_id: @segment_id,
           actor: @actor,
           action: action_id,

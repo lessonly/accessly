@@ -7,7 +7,6 @@ describe Accessly do
     _(query.can?(1, Post)).must_equal false
 
     Accessly::PermittedAction.create!(
-      id: SecureRandom.uuid,
       actor: actor,
       action: 1,
       object_type: Post
@@ -22,7 +21,6 @@ describe Accessly do
     post = Post.create!
 
     permitted_action = Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor,
       action: 9,
       object_type: Post,

@@ -12,7 +12,6 @@ describe Accessly do
     group2 = Group.create!
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor1,
       action: 1,
       object_type: Post,
@@ -20,7 +19,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: actor1,
       action: 1,
       object_type: Post,
@@ -28,7 +26,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: group1,
       action: 2,
       object_type: Post,
@@ -36,7 +33,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       actor: group2,
       action: 1,
       object_type: Post,
@@ -70,7 +66,6 @@ describe Accessly do
     group2 = Group.create!
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: 1,
       actor: actor1,
       action: 1,
@@ -79,7 +74,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: 1,
       actor: actor1,
       action: 1,
@@ -88,7 +82,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: 1,
       actor: group1,
       action: 2,
@@ -97,7 +90,6 @@ describe Accessly do
     )
 
     Accessly::PermittedActionOnObject.create!(
-      id: SecureRandom.uuid,
       segment_id: 1,
       actor: group2,
       action: 1,
