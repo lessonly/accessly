@@ -14,7 +14,7 @@ describe Accessly do
   it "returns nil after a successful revoke on a segment" do
     actor = User.create!
     Accessly::PermittedAction.create!(segment_id: 1, actor: actor, action: 1, object_type: "Post")
-    Accessly::PermittedAction.where(actor: actor, segment_id: 1).count.must_equal 1
+    _(Accessly::PermittedAction.where(actor: actor, segment_id: 1).count).must_equal 1
 
     _(Accessly::Permission::Revoke.new(actor).on_segment(1).revoke!(1, Post)).must_be_nil
     _(Accessly::PermittedAction.where(actor: actor, segment_id: 1).count).must_equal 0
