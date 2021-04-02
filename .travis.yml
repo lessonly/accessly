@@ -1,0 +1,13 @@
+language: ruby
+services:
+  - postgresql
+cache: bundler
+rvm:
+  - 2.7
+  - 2.6
+gemfile:
+  - Gemfile
+before_script:
+  - psql -c 'create database aaa_test;' -U postgres
+before_install:
+  - gem install bundler
