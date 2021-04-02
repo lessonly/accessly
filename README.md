@@ -341,33 +341,16 @@ UserPolicy.new(user).list(:view)
 
 Accessly implements some internal caching to increase the performance of permission queries. If you use the same Policy object for the same lookup twice, then the second one will lookup based on the cached result. Be mindful of caching when using `revoke!` or `grant!` calls with subsequent permission queries on the same Policy object.
 
+## Maintainers
 
-## Contributing
+Maintainers:
+- Are active contributors
+- Help set project direction
+- Merge contributions from contributors
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/lessonly/accessly.
+- [@rreinhardt9](https://github.com/rreinhardt9)
 
-## Testing
-
-Local tests rely on a postgres database. from a `psql` console on your local machine
-1) Create the local 'aaa_test' database
-```
-CREATE DATABASE aaa_test;
-```
-
-2) Connect to the database
-```
-\c aaa_test;
-```
-
-3) Create the necessary extension
-```
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-```
-
-4) From the root of the gem folder run
-```
-rake
-```
+If you are interested in contributing, that is exciting! Please check out [CONTRIBUTING.md](CONTRIBUTING.md); we appreciate your help!
 
 ## License
 
