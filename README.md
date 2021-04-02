@@ -1,6 +1,10 @@
 <img width="268" src="https://raw.githubusercontent.com/lessonly/accessly/master/logo/logo.png" alt="Accessly Logo">
 
 # Accessly
+- Latest master build status:
+[![Build Status](https://travis-ci.com/lessonly/accessly.svg?branch=master)](https://travis-ci.com/lessonly/accessly)
+- Help us document our code 📝:
+[![Inline docs](http://inch-ci.org/github/lessonly/accessly.svg?branch=master)](http://inch-ci.org/github/lessonly/accessly)
 
 Accessly exists out of our need to answer the following questions:
 
