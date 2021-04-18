@@ -59,4 +59,16 @@ describe Accessly::Policy::Base do
     GrantRevokePolicy.new(user).revoke!(:view, other_user)
     _(GrantRevokePolicy.new(user).view?(other_user)).must_equal false
   end
+
+  it "revokes a permission from all actors" do
+    user = User.create!
+    other_user = User.create!
+
+    GrantRevokePolicy.new(user).grant!(:edit_basic_info)
+    GrantRevokePolicy.new(other_user).grant!(:edit_basic_info)
+
+    GrantRevokePolicy.revoke_all!(:edit_basic_info)
+    _(GrantRevokePolicy.new(user).edit_basic_info?).must_equal false
+    _(GrantRevokePolicy.new(other_user).edit_basic_info?).must_equal false
+  end
 end

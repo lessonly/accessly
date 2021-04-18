@@ -1,10 +1,11 @@
 <img width="268" src="https://raw.githubusercontent.com/lessonly/accessly/master/logo/logo.png" alt="Accessly Logo">
 
 # Accessly
+
 - Latest master build status:
-[![Build Status](https://travis-ci.com/lessonly/accessly.svg?branch=master)](https://travis-ci.com/lessonly/accessly)
+  [![Build Status](https://travis-ci.com/lessonly/accessly.svg?branch=master)](https://travis-ci.com/lessonly/accessly)
 - Help us document our code 📝:
-[![Inline docs](http://inch-ci.org/github/lessonly/accessly.svg?branch=master)](http://inch-ci.org/github/lessonly/accessly)
+  [![Inline docs](http://inch-ci.org/github/lessonly/accessly.svg?branch=master)](http://inch-ci.org/github/lessonly/accessly)
 
 Accessly exists out of our need to answer the following questions:
 
@@ -49,7 +50,7 @@ Add the ActiveRecord Migrations:
 
 ## Usage
 
-You can use the Accessly gem directly to grant | revoke | check permissions.  We recommend the use of 'Policies' covered in this README.
+You can use the Accessly gem directly to grant | revoke | check permissions. We recommend the use of 'Policies' covered in this README.
 Checkout our [API docs](http://www.rubydoc.info/gems/accessly) for more info on using the API directly
 
 We use Accessly with policies in mind to capture everything we want to know about a specific permission set. Let's take a look at some examples:
@@ -125,7 +126,7 @@ end
 
 #### ACTIONS ON OBJECTS
 
-Accessly policies rely on a definition of `actions` and/or `actions_on_objects` for effective use. This example uses `actions_on_objects` which associate a "permission" with an object in your system.  The "object" is typically an ActiveRecord object.
+Accessly policies rely on a definition of `actions` and/or `actions_on_objects` for effective use. This example uses `actions_on_objects` which associate a "permission" with an object in your system. The "object" is typically an ActiveRecord object.
 
 - `actions_on_objects` map a symbol to an integer value.
 - An `actions_on_objects` value should be a unique integer within each policy.
@@ -135,10 +136,10 @@ Defined policy `actions_on_objects` become part of the policy API. (see examples
 
 #### Policy API Example
 
-We differentiate permissions by a `namespace` which by default is the name of your policy class.  However,
+We differentiate permissions by a `namespace` which by default is the name of your policy class. However,
 it may be necessary to override the default behavior represented in the above example.
 
-Accessly can return a relation of ids on an object for a given actor's permission grants.  `Accessly::Policy::Base` requires
+Accessly can return a relation of ids on an object for a given actor's permission grants. `Accessly::Policy::Base` requires
 that you implement `self.model_scope` with an `ActiveRecord` scope so the `list` api can return an `ActiveRecord::Relation`
 
 With this policy we can `grant` permissions for a user to do an action on another user object.
@@ -290,6 +291,7 @@ class UserPolicy < Accessly::Policy::Base
   end
 end
 ```
+
 #### Overriding defaults
 
 Here we provide some examples of the `Accessly::Policy::Base` overrides you can make in an application. You can override the function completely or fallback to the `Base` method. The implementation strategy is up to you!
@@ -337,6 +339,16 @@ UserPolicy.new(user).view
 UserPolicy.new(user).list(:view)
 ```
 
+## Bulk Actions
+
+### revoke_all!
+
+Revokes a given permission for all actors and objects.
+
+```ruby
+ApplicationFeaturePolicy.revoke_all!(:view_super_secret_page)
+```
+
 ## Caching
 
 Accessly implements some internal caching to increase the performance of permission queries. If you use the same Policy object for the same lookup twice, then the second one will lookup based on the cached result. Be mindful of caching when using `revoke!` or `grant!` calls with subsequent permission queries on the same Policy object.
@@ -344,6 +356,7 @@ Accessly implements some internal caching to increase the performance of permiss
 ## Maintainers
 
 Maintainers:
+
 - Are active contributors
 - Help set project direction
 - Merge contributions from contributors

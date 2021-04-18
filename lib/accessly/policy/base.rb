@@ -147,6 +147,11 @@ module Accessly
         revoke_object.revoke!(action_id, namespace, object_id)
       end
 
+      def self.revoke_all!(action)
+        action_id = _actions[action] || _invalid_general_action!(action)
+        Accessly::Permission::BulkRevoke.new.revoke!(action_id, namespace)
+      end
+
       def accessly_query
         @_accessly_query ||= begin
           query = Accessly::Query.new(actors)
