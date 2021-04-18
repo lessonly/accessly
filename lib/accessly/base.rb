@@ -16,11 +16,11 @@ module Accessly
     def initialize(actors)
       @segment_id = -1
       @actors = case actors
-      when Hash
-        actors
-      else
-        { actors.class.name => actors.id }
-      end
+                when Hash
+                  actors
+                else
+                  { actors.class.name => actors.id }
+                end
     end
 
     # @param segment_id [Integer] The segment to further separate permissions requests
