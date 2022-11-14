@@ -35,10 +35,10 @@ end
 
 def pg_config
   {
-    adapter: "postgresql",
-    database: "aaa_test",
-    username: "postgres",
-    host: "localhost",
+    adapter: 'postgresql',
+    database: 'aaa_test',
+    username: 'postgres',
+    host: 'localhost',
     pool: 5,
     timeout: 5000
   }
