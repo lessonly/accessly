@@ -3,7 +3,7 @@
 # Accessly
 
 - Latest master build status:
-  [![Build Status](https://travis-ci.com/lessonly/accessly.svg?branch=master)](https://travis-ci.com/lessonly/accessly)
+  [![Build Status](https://github.com/lessonly/accessly/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/lessonly/accessly/actions/workflows/test.yml?query=branch%3Amaster)
 - Help us document our code 📝:
   [![Inline docs](http://inch-ci.org/github/lessonly/accessly.svg?branch=master)](http://inch-ci.org/github/lessonly/accessly)
 
