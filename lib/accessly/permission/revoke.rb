@@ -12,7 +12,7 @@ module Accessly
         if actor.is_a?(ActiveRecord::Base)
           @actor = actor
         else
-          raise Accessly::GrantError.new("Actor is not an ActiveRecord::Base object")
+          raise Accessly::RevokeError.new("Actor is not an ActiveRecord::Base object")
         end
       end
 
