@@ -8,9 +8,9 @@ module Accessly
       # @param actor [ActiveRecord::Base] The actor to revoke permission
       def initialize(actor)
         super(actor)
-        @actor = case actor
-        when ActiveRecord::Base
-          actor
+
+        if actor.is_a?(ActiveRecord::Base)
+          @actor = actor
         else
           raise Accessly::RevokeError.new("Actor is not an ActiveRecord::Base object")
         end
